@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>[Insert Game Here]</title>
+        <meta charset="UTF-8">
+        <script src="https://cdn.jsdelivr.net/npm/p5@0.10.2/lib/p5.js"></script>
+        <script src="game.js"></script>
+    </head>
+    <body>
+        <style>
+            html,body{
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color:rgb(20,20,20);
+                margin-left:20px;
+                margin-right:20px;
+                color:whitesmoke;
+            }
+            button{
+                margin-right:20px;
+                margin-top:10px;
+                margin-bottom:10px;
+                border-radius: 5px;
+                padding-right:30px;
+                padding-left:30px;
+                padding-top:10px;
+                padding-bottom:10px;
+                background-image:linear-gradient(to right, seagreen, rgb(46, 139, 123));
+                color:black;
+                border:none;
+            }
+            .pop-box{
+                color:black;
+                border-radius:10px;
+                background-image:linear-gradient(to right,white,whitesmoke);
+                margin-top:10px;
+                margin-left:10px;
+                padding:10px;
+                width:fit-content;
+                position:absolute;
+                box-shadow:0px 0px 10px black;
+            }
+        </style>
+        <h1>[Insert Game Here]</h1>
+        <p>v0.4.1</p>
+        <button id='instructions' onClick='openInstructions()'>Instructions</button>
+        <button id='credits' onClick='openCredits()'>Credits</button>
+        <div id='p-instructions' style='display:none;'class='pop-box'>
+                <h2>How To Play</h2>
+                <p>Objective:
+                <ul>
+                <li>Survive in the barren wasteland that Earth has become.</li>
+                <li>Develop your colony and manage its resources.</li>
+                <li>Explore the wastes and see what's still out there...</li>
+                </ul>
+                <i>Navigate the map using right click and drag<br>
+                Select Structures then click on parts of the map to place them.</i></p>
+        </div>
+        <p id='p-credits' style='display:none;' class='pop-box'>
+            Created by Jieruei and Nathan<br>
+            Built with p5.js
+        </p>
+        <script>
+            function openInstructions(){
+                howtobutton=document.getElementById('instructions');
+                if(howtobutton.innerHTML==='Instructions'){
+                    howtobutton.innerHTML='✕';
+                    document.getElementById('p-instructions').style.display='block';
+                }
+                else{
+                    howtobutton.innerHTML='Instructions';
+                    document.getElementById('p-instructions').style.display='none';
+                }
+            }
+            function openCredits(){
+                howtobutton=document.getElementById('credits');
+                if(howtobutton.innerHTML==='Credits'){
+                    howtobutton.innerHTML='✕';
+                    document.getElementById('p-credits').style.display='block';
+                }
+                else{
+                    howtobutton.innerHTML='Credits';
+                    document.getElementById('p-credits').style.display='none';
+                }
+            }
+        </script>
+    </body>
+</html>
