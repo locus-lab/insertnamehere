@@ -41,12 +41,6 @@ let storyCtr = 0;
 //variable to make sure structures are not accidentally created
 let clearClick = false;
 
-function setup(){
-    createCanvas(w,h);
-    noStroke();
-    makegrid();
-}
-
 resources = {
     'Population':100,
     'Food':100,
@@ -61,28 +55,27 @@ structures = {
     'thinker':[100,100,255]
 }
 
-terrainImages = [
-    'images/drygrass.png',
-    'images/drygrass2.png',
-    'images/grasswasteland.png',
-    'images/lake.png',
-    'images/wasteland.png',
-    'images/wastelandruin.png'
-]
+let terrainImages;
 
-let terrainImages1 = [];
+let testImg;
 
-function preload(){
-    for(let k in terrainImages){
-        terrainImages1.push(loadImage(k));
-    }
+function setup(){
+    i1=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/drygrass.png');
+    i2=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/drygrass2.png');
+    i3=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/grasswasteland.png');
+    i4=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/lake.png');
+    i5=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/wasteland.png');
+    i6=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/wastelandruin.png');
+    terrainImages=[
+        i1,i2,i3,i4,i5,i6
+    ]
+    createCanvas(w,h);
+    noStroke();
+    makegrid();
 }
 
 let currentStructure = 0;
 let selectedStructure = Object.keys(structures)[currentStructure];
-console.log(selectedStructure);
-
-
 
 function buttonClicked(x,y,width,height){
     if(mouseIsPressed&&mouseButton===LEFT){
@@ -121,7 +114,6 @@ function placeObject(){
                 if(objectExists(i,j)===false){
                     if(resources['Wood']>=10 && resources['Population']>20){
                         objects.push({'type':selectedStructure,'x':i,'y':j});
-                        //objects.push({'type':structures[currentStructure],'x':i,'y':j});
                         resources['Wood']-=10;
                         resources['Population']-=20;
                     }
@@ -220,19 +212,19 @@ function makegrid(){
     for(let i=0;i<gw;i++){
         n = [];
         for(let j=0;j<gh;j++){
-            n.push(loadImage('images/'+terrainImages[round(Math.random()*terrainImages.length)]));
+            n.push(round(Math.random()*(terrainImages.length-1))+1);
         }
         grid.push(n);
+        //console.log(n);
     }
+    //console.log(grid);
 }
 
 function drawgrid(){
     background(90);
     for(let i=0;i<gw;i++){
         for(let j=0;j<gh;j++){
-            //fill(grid[i][j]);
-            //rect(i*wd+offsetX,j*hd+offsetY,wd,hd);
-            image(grid[i][j],i*wd+offsetX,j*hd+offsetY,wd,hd);
+            image(window['i'+grid[i][j].toString()],i*wd+offsetX,j*hd+offsetY,wd,hd);
         }
     }
 }
