@@ -1,11 +1,11 @@
-// v0.4: General Improvement
+// v0.3: Terrain Textures
 
 grid = [];
 objects = [];
 
 //canvas dimensions
-let w = window.innerWidth-100;
-let h = 500;
+let w = window.innerWidth;
+let h = window.innerHeight-60;
 
 //grid dimensions
 let gw = 100;
@@ -35,17 +35,11 @@ let currentAlert = false;
 let alertFade = 100;
 
 //storybox
-let currentStory = 'test test 123';//`After hundreds of years of walking through the ruined earth, passing stories down from generation to generation, the nomadic lifestyle seems like the only way of life. But it is time to settle down- time to heal the earth, bring back the ways of our fathers, to part the fog that blots the sun. You have been chosen as the leader of a small colony- defend them at all costs.`;
+let currentStory = 'Insert Catchy Opening Sequence Here';
 let storyCtr = 0;
-
-//descriptions when hover
-let currentDescription = false;
 
 //variable to make sure structures are not accidentally created
 let clearClick = false;
-
-//"fog of war"
-let fogs=[];
 
 resources = {
     'Population':100,
@@ -55,26 +49,15 @@ resources = {
 }
 
 structures = {
-    'basic-hut':[[255,100,100],'A basic hut, for all your basic hut needs!'],
-    'trapper':[[100,255,100],'A way to keep your people from starving to death!'],
-    'logger':[[255,150,100],'Employs a squadron of woodpeckers to contribute to climate change'],
-    'thinker':[[100,100,255],'They think, I think. Therefore they are and I am. Or something.']
+    'basic-hut':[255,100,100],
+    'trapper':[100,255,100],
+    'logger':[255,150,100],
+    'thinker':[100,100,255]
 }
-
-/*terrainImageNames = [
-    'drygrass.png',
-    'drygrass2.png',
-    'grasswasteland.png',
-    'lake.png',
-    'wasteland.png',
-    'wastelandruin.png'
-]*/
 
 let terrainImages;
 
-let fogImg;
-
-//var i1,i2,i3,i4,i5,i6;
+let testImg;
 
 function setup(){
     i1=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/drygrass.png');
@@ -86,27 +69,13 @@ function setup(){
     terrainImages=[
         i1,i2,i3,i4,i5,i6
     ]
-    fogImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/fog.png');
-    console.log('INSERTNAMEHERE - version 0.3.1');
     createCanvas(w,h);
     noStroke();
     makegrid();
-    textFont('monospace');
 }
-
-/*function preload(){
-    terrainImages=[];
-    for(let i=0;i<terrainImageNames.length;i++){
-        img=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/'+terrainImageNames[i]);
-        terrainImages.push(img);
-    }
-    testImg = loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/drygrass.png');
-    //console.log(terrainImages);
-}*/
 
 let currentStructure = 0;
 let selectedStructure = Object.keys(structures)[currentStructure];
-//console.log(selectedStructure);
 
 function buttonClicked(x,y,width,height){
     if(mouseIsPressed&&mouseButton===LEFT){
@@ -145,10 +114,8 @@ function placeObject(){
                 if(objectExists(i,j)===false){
                     if(resources['Wood']>=10 && resources['Population']>20){
                         objects.push({'type':selectedStructure,'x':i,'y':j});
-                        //objects.push({'type':structures[currentStructure],'x':i,'y':j});
                         resources['Wood']-=10;
                         resources['Population']-=20;
-                        clearfog();
                     }
                     else{
                         currentAlert='Not enough resources!'
@@ -175,7 +142,7 @@ function drawMenu(){
         }
 
         //main rect
-        fill(20,20,20,240);
+        fill(20);
         rect(w-menuWidth,0,menuWidth,h);
 
         //resources title block
@@ -200,16 +167,10 @@ function drawMenu(){
         //structure listing
         textSize(15);
         itemPos = 230;
-
-        //popup descriptions
-        popupOpen = false;
-
         for(var item=0;item<Object.keys(structures).length;item++){
             if(buttonHovered(w-menuWidth+20,itemPos,menuWidth-20,20)){
                 fill(50);
                 rect(w-menuWidth,itemPos-2,menuWidth,20);
-                currentDescription=structures[Object.keys(structures)[item]][1];
-                popupOpen = true;
             }
             if(item===currentStructure){
                 fill(100,255,100);
@@ -225,9 +186,6 @@ function drawMenu(){
                 selectedStructure = Object.keys(structures)[item];
             }
             itemPos += 20;
-        }
-        if(popupOpen===false){
-            currentDescription = false;
         }
     }
     else{
@@ -245,7 +203,7 @@ function drawMenu(){
 
 function drawObjects(){
     for(let i=0;i<objects.length;i++){
-        fill(structures[objects[i]['type']][0]);
+        fill(structures[objects[i]['type']]);
         rect(objects[i]['x']*wd+5+offsetX,objects[i]['y']*hd+5+offsetY,wd-10,hd-10);
     }
 }
@@ -255,7 +213,6 @@ function makegrid(){
         n = [];
         for(let j=0;j<gh;j++){
             n.push(round(Math.random()*(terrainImages.length-1))+1);
-            fogs.push([i,j,1]);
         }
         grid.push(n);
         //console.log(n);
@@ -263,44 +220,11 @@ function makegrid(){
     //console.log(grid);
 }
 
-function drawfog(){
-    for(let i=0; i<fogs.length;i++){
-        //fill(100,100,100,200+55*fogs[i][2]);
-        tint(255,200+55*fogs[i][2]);
-        if(fogs[i][0]*wd+offsetX+wd>0&&fogs[i][1]*hd+offsetY+hd>0&&fogs[i][0]*wd+offsetX<w&&fogs[i][1]*hd+offsetY<h){
-            //rect(fogs[i][0]*wd+offsetX,fogs[i][1]*hd+offsetY,wd,hd);
-            image(fogImg,fogs[i][0]*wd+offsetX,fogs[i][1]*hd+offsetY,wd,hd);
-        }
-    }
-}
-
-function clearfog(){
-    let fogs2 = fogs;
-    for(let k=0; k<3; k++){
-        for(let i=0; i<fogs.length;i++){
-            for(let j=0; j<objects.length;j++){
-                if(Math.hypot(fogs[i][0]-objects[j]['x'],fogs[i][1]-objects[j]['y'])<=2.0){
-                    //console.log(Math.hypot(fogs[i][0]-objects[j]['x'],fogs[i][1]-objects[j]['y']));
-                    fogs2.splice(i,1);
-                }
-                if(Math.hypot(fogs[i][0]-objects[j]['x'],fogs[i][1]-objects[j]['y'])<=4.0){
-                    //console.log(Math.hypot(fogs[i][0]-objects[j]['x'],fogs[i][1]-objects[j]['y']));
-                    fogs[i][2] = 0;
-                }
-            }
-        }
-    }
-
-    fogs=fogs2;
-}
-
 function drawgrid(){
     background(90);
     for(let i=0;i<gw;i++){
         for(let j=0;j<gh;j++){
-            if(i*wd+offsetX+wd>0&&j*hd+offsetY+hd>0&&i*wd+offsetX<w&&j*hd+offsetY<h){
-                image(window['i'+grid[i][j].toString()],i*wd+offsetX,j*hd+offsetY,wd,hd);
-            }
+            image(window['i'+grid[i][j].toString()],i*wd+offsetX,j*hd+offsetY,wd,hd);
         }
     }
 }
@@ -368,7 +292,7 @@ function alertManager(){
 
 function storyManager(){
     if(currentStory){
-        fill(0,0,0,200);
+        fill(0,0,0,99);
         rect(40,40,w-80,h-120);
         fill(255);
         textSize(20);
@@ -377,7 +301,7 @@ function storyManager(){
             storyCtr+=1;
         }
         else{
-            fill(0,0,0,200);
+            fill(0,0,0);
             rect(40,h-60,w-80,50);
             fill(255);
             text("[Continue, even if it doesn't make sense]",45,h-50);
@@ -387,23 +311,6 @@ function storyManager(){
                 clearClick=true;
             }
         }
-    }
-}
-
-function descriptionManager(){
-    if(currentDescription){
-        fill(255, 213, 74,200);
-        let dx = mouseX;
-        let dy = mouseY;
-        if(w-mouseX<200){
-            dx = mouseX-200;
-        }
-        if(h-mouseY<150){
-            dy = mouseY-150;
-        }
-        rect(dx,dy,200,150);
-        fill(0);
-        text(currentDescription,dx+10,dy+10,200-20,150-20);
     }
 }
 
@@ -456,13 +363,11 @@ function keyPressed(){
 
 function draw(){
     drawgrid();
-    drawfog();
     drawObjects();
     drawMenu();
     if(drag){
         gridDrag();
     }
-    descriptionManager()
     alertManager();
     storyManager();
 }
