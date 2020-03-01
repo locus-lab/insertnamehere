@@ -44,6 +44,7 @@
         <p>v0.4.1</p>
         <button id='instructions' onClick='openInstructions()'>Instructions</button>
         <button id='credits' onClick='openCredits()'>Credits</button>
+        <button id='help' onClick='openHelp()'>Help!</button>
         <div id='p-instructions' style='display:none;'class='pop-box'>
                 <h2>How To Play</h2>
                 <p>Objective:
@@ -53,12 +54,20 @@
                 <li>Explore the wastes and see what's still out there...</li>
                 </ul>
                 <i>Navigate the map using right click and drag<br>
-                Select Structures then click on parts of the map to place them.</i></p>
+                Select structures from the menu, then click on parts of the map to place them.<br></i></p>
         </div>
         <p id='p-credits' style='display:none;' class='pop-box'>
             Created by Jieruei and Nathan<br>
             Built with p5.js
         </p>
+        <div id='p-help' style='display:none;' class='pop-box'>
+            <h2>Why does the game not appear?</h2>
+            <p>If you're using Internet Explorer, try another browser.</p>
+            <h2>Why is the map covered with smoke?</h2>
+            <p>It's to stop players from finding the goal too easily... did I accidentally reveal too much?</p>
+            <h2>Why is there a help section?</h2>
+            <p>Why did you click on it for?</p>
+        </div>
         <script>
             function openInstructions(){
                 howtobutton=document.getElementById('instructions');
@@ -80,6 +89,17 @@
                 else{
                     howtobutton.innerHTML='Credits';
                     document.getElementById('p-credits').style.display='none';
+                }
+            }
+            function openHelp(){
+                helpbutton=document.getElementById('help');
+                if(helpbutton.innerHTML==='Help!'){
+                    helpbutton.innerHTML='✕';
+                    document.getElementById('p-help').style.display='block';
+                }
+                else{
+                    helpbutton.innerHTML='Help!';
+                    document.getElementById('p-help').style.display='none';
                 }
             }
         </script>
