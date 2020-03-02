@@ -1,7 +1,7 @@
-// v0.5: The Ghouls Have Come
+// v0.5.2: Update Stuff
 
 //canvas dimensions
-let w = window.innerWidth-40;
+let w = window.innerWidth*0.5;
 let h = 500;
 
 //grid dimensions
@@ -16,7 +16,7 @@ let hd = 100;
 grid = [];
 
 //structure array
-objects = [{'type':'basic-hut','x':Math.round(gw/2),'y':Math.round(gh/2)}];
+objects = [];
 
 //ghoul array
 ghouls = [];
@@ -44,7 +44,7 @@ let currentAlert = false;
 let alertFade = 100;
 
 //storybox
-let currentStory = 'CLEARING THE SKIES - v0.5'//`After hundreds of years of walking through the ruined earth, passing stories down from generation to generation, the nomadic lifestyle seems like the only way of life. But it is time to settle down- time to heal the earth, bring back the ways of our fathers, to part the fog that blots the sun. You have been chosen as the leader of a small colony- defend them at all costs.`;
+let currentStory = `After hundreds of years of walking through the ruined earth, passing stories down from generation to generation, the nomadic lifestyle seems like the only way of life. But it is time to settle down- time to heal the earth, bring back the ways of our fathers, to part the fog that blots the sun. You have been chosen as the leader of a small colony- defend it at all costs.`;
 let storyCtr = 0;
 
 //descriptions when hover
@@ -62,9 +62,16 @@ let clearClick = false;
 //"fog of war"
 let fogs=[];
 
+//startscreen
+let startScreen = true;
+
+population = {
+    'Total':100,
+    'Occupied':0,
+    'Unoccupied':100
+}
+
 resources = {
-    'Population':100,
-    'Unoccupied':100,
     'Food':100,
     'Wood':100,
     'Science™':0
@@ -80,6 +87,9 @@ structures = {
 let terrainImages;
 
 let fogImg;
+let ghoulImg;
+
+let startImg;
 
 function setup(){
     i1=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/drygrass.png');
@@ -92,6 +102,8 @@ function setup(){
         i1,i2,i3,i4,i5,i6
     ]
     fogImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/fog.png');
+    ghoulImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/ghoul.png');
+    startImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/start-img.png');
     console.log('Clearing the Skies - version 0.5');
     createCanvas(w,h);
     noStroke();
@@ -99,6 +111,7 @@ function setup(){
     clearfog();
     scatterghouls();
     textFont('monospace');
+    noSmooth();
 }
 
 let currentStructure = 0;
@@ -180,10 +193,11 @@ function placeObject(){
             if(mouseX>i*wd+offsetX&&mouseX<i*wd+wd+offsetX&&mouseY>j*hd+offsetY&&mouseY<j*hd+hd+offsetY){
                 if(isInFog(i,j)===false){
                     if(objectExists(i,j)===false){
-                        if(resources['Wood']>=structures[selectedStructure][2] && resources['Unoccupied']>10){
+                        if(resources['Wood']>=structures[selectedStructure][2] && population['Unoccupied']>10){
                             objects.push({'type':selectedStructure,'x':i,'y':j});
                             resources['Wood']-=structures[selectedStructure][2];
-                            resources['Unoccupied']-=20;
+                            population['Unoccupied']-=20;
+                            population['Occupied']+=20;
                             clearfog();
                         }
                         else{
@@ -220,15 +234,30 @@ function drawMenu(){
         fill(20,20,20,240);
         rect(w-menuWidth,0,menuWidth,h);
 
+        //population title block
+        fill(100,100,255);
+        textSize(20);
+        text("Population",w-menuWidth+20,20);
+        
+        textSize(15);
+        fill(255);
+        let itemPos = 50;
+
+        for(var key in population){
+            text(key+': '+population[key].toString(),w-menuWidth+20,itemPos);
+            itemPos += 20;
+        }
+
         //resources title block
         fill(100,100,255);
         textSize(20);
-        text("Resources",w-menuWidth+20,20);
+        text("Resources",w-menuWidth+20,120);
 
         //resource listing
         textSize(15);
         fill(255);
-        let itemPos = 50;
+        itemPos = 150;
+
         for(var key in resources){
             text(key+': '+resources[key].toString(),w-menuWidth+20,itemPos);
             itemPos += 20;
@@ -237,11 +266,11 @@ function drawMenu(){
         //structure title block
         fill(100,100,255);
         textSize(20);
-        text("Structures",w-menuWidth+20,200);
+        text("Structures",w-menuWidth+20,220);
 
         //structure listing
         textSize(15);
-        itemPos = 230;
+        itemPos = 250;
 
         //popup descriptions
         popupOpen = false;
@@ -321,16 +350,51 @@ function drawgrid(){
     for(let i=0;i<gw;i++){
         for(let j=0;j<gh;j++){
             if(i*wd+offsetX+wd>0&&j*hd+offsetY+hd>0&&i*wd+offsetX<w&&j*hd+offsetY<h){
-                image(window['i'+grid[i][j].toString()],i*wd+offsetX,j*hd+offsetY,wd,hd);
+                if(fogs.includes([i,j,1])===false){
+                    image(window['i'+grid[i][j].toString()],i*wd+offsetX,j*hd+offsetY,wd,hd);
+                }
             }
         }
     }
 }
 
 function drawGhouls(){
-    fill(255,100,255,230);
+    tint(255,230);
     for(let i=0;i<ghouls.length;i++){
-        rect(ghouls[i][0]*wd+5+offsetX,ghouls[i][1]*hd+5+offsetY,wd-10,hd-10);
+        if(ghouls[i][0]*wd+offsetX+wd>0&&ghouls[i][1]*hd+offsetY+hd>0&&ghouls[i][0]*wd+offsetX<w&&ghouls[i][1]*hd+offsetY<h){
+            image(ghoulImg,ghouls[i][0]*wd+5+offsetX,ghouls[i][1]*hd+5+offsetY,wd-10,hd-10);
+        }
+    }
+}
+
+function drawStart(){
+    background(50);
+    //image(startImg,-(500*h/213-w)/2,0,500*h/213,h)
+    textSize(30);
+    fill(255,100);
+    //rect(70,h/2-90/2-30,w-140,50);
+    fill(255);
+    text('Clearing the Skies',70,h/2-90/2);
+    
+    textSize(10);
+    text('v.0.5.2',70,h/2-90/2+30);
+    
+    
+    textSize(20);
+    if(buttonHovered(70,h/2-90/2+60,w-140,50)){
+        fill(100,100,255);
+    }
+    else{
+        fill(100,255,100);
+    }
+    rect(70,h/2-90/2+60,w-140,50);
+    fill(0);
+    text("Press to Start",80,h/2-90/2+90);
+    if(buttonClicked(70,h/2-90/2+60,w-140,50)){
+        startScreen = false;
+        clearClick = true;
+        objects.push({'type':'basic-hut','x':Math.round(gw/2),'y':Math.round(gh/2)});
+        clearfog();
     }
 }
 
@@ -342,45 +406,47 @@ function gridDrag(){
 /* Managers */
 
 function resourceManagement(){
-    for(let i=0;i<objects.length;i++){
-        switch(objects[i]['type']){
-            case 'basic-hut':
-                if(resources['Food']>=2){
-                    resources['Unoccupied']++;
-                    resources['Population']++;
-                    resources['Food']-=2;
-                }
-                else{
-                    currentAlert='Not enough food; population generation stopped';
-                }
-                break;
-            case 'trapper':
-                if(resources['Wood']>=1){
-                    resources['Food']+=3;
-                    resources['Wood']-=1;
-                }
-                else{
-                    currentAlert='Not enough wood; food generation stopped';
-                }
-                break;
-            case 'logger':
-                if(resources['Food']>=3){
-                    resources['Wood']+=3;
-                    resources['Food']-=3;
-                }
-                else{
-                    currentAlert='Not enough food; wood generation stopped';
-                }
-                break;
-            case 'thinker':
-                if(resources['Food']>=3){
-                    resources['Science™']+=1;
-                    resources['Food']-=3;
-                }
-                else{
-                    currentAlert='Not enough food; Science™ generation stopped';
-                }
-                break;
+    if(currentStory===false){
+        for(let i=0;i<objects.length;i++){
+            switch(objects[i]['type']){
+                case 'basic-hut':
+                    if(resources['Food']>=2){
+                        population['Unoccupied']++;
+                        population['Total']++;
+                        resources['Food']-=2;
+                    }
+                    else{
+                        currentAlert='Not enough food; population generation stopped';
+                    }
+                    break;
+                case 'trapper':
+                    if(resources['Wood']>=1){
+                        resources['Food']+=3;
+                        resources['Wood']-=1;
+                    }
+                    else{
+                        currentAlert='Not enough wood; food generation stopped';
+                    }
+                    break;
+                case 'logger':
+                    if(resources['Food']>=3){
+                        resources['Wood']+=3;
+                        resources['Food']-=3;
+                    }
+                    else{
+                        currentAlert='Not enough food; wood generation stopped';
+                    }
+                    break;
+                case 'thinker':
+                    if(resources['Food']>=3){
+                        resources['Science™']+=1;
+                        resources['Food']-=3;
+                    }
+                    else{
+                        currentAlert='Not enough food; Science™ generation stopped';
+                    }
+                    break;
+            }
         }
     }
 }
@@ -391,7 +457,7 @@ function alertManager(){
         rect(w/4,0,w/2,50);
         textSize(20);
         text(currentAlert,w/4+10,10,w/2-20,50);
-        alertFade-=10;
+        alertFade-=2;
     }
     if(alertFade<=0){
         currentAlert=false;
@@ -410,7 +476,12 @@ function storyManager(){
             storyCtr+=1;
         }
         else{
-            fill(100,255,100,150);
+            if(buttonHovered(40,h-60,w-80,50)){
+                fill(100,100,255,200);
+            }
+            else{
+                fill(100,255,100,150);
+            }
             rect(40,h-60,w-80,50);
             fill(0);
             text("[Please Press this Button]",45,h-50);
@@ -455,19 +526,43 @@ function ghoulManager(){
         if(chosenWeapon-1+defeated>ghoulWeapons.length){
             ghoulChoice = (chosenWeapon-1+defeated)%ghoulWeapons.length;
         }
+        if(chosenWeapon-1+defeated<0){
+            ghoulChoice = ghoulWeapons.length+(chosenWeapon-1+defeated);
+        }
         text('Ghoul chose '+ghoulWeapons[ghoulChoice],60,60,w-100,h);
         if(defeated===-1){
             ghouls.splice(currentGhoul,1);
             text('The ghoul vanishes in a puff of purple smoke!',60,90,w-100);
         }
         if(defeated===1){
-            text('The ghoul is angered and destroys all your nearby structures!',60,90,w-100);
+            text('The ghoul is angered and stomps on a bunch of people!',60,90,w-100);
+            currentAlert = 'You lose 20 population!';
+            population['Total']-=20;
+            population['Unoccupied']-=20;
+            ghouls.splice(currentGhoul,1);
         }
-        fill(100,255,100,150);
+        
+        if(buttonHovered(40,h-60,w-80,50)){
+            fill(100,100,255,200);
+        }
+        else{
+            fill(100,255,100,150);
+        }
         rect(40,h-60,w-80,50);
         fill(0);
+
         text("[Please Press this Button]",45,h-50);
         if(buttonClicked(40,h-60,w-80,50)){
+            if(defeated===-1){
+                resources['Wood']+=50;
+                resources['Food']+=20;
+                currentAlert = "You gain 50 Wood from scavenging the ghoul's treasure hoard!";
+            }
+            else{
+                currentAlert = 'You lose 20 population!';
+                population['Total']-=20;
+                population['Unoccupied']-=20;
+            }
             currentGhoul=false;
             chosenWeapon=false;
             defeated = false;
@@ -563,18 +658,23 @@ function keyPressed(){
 }
 
 function draw(){
-    drawgrid();
-    drawGhouls();
-    drawfog();
-    drawObjects();
-    drawMenu();
-    if(drag){
-        gridDrag();
+    if(startScreen){
+        drawStart();
     }
-    descriptionManager()
-    alertManager();
-    storyManager();
-    ghoulManager();
+    else{
+        drawgrid();
+        drawGhouls();
+        drawfog();
+        drawObjects();
+        drawMenu();
+        if(drag){
+            gridDrag();
+        }
+        descriptionManager()
+        alertManager();
+        storyManager();
+        ghoulManager();
+    }
 }
 
 // disable right-click menu appearing after dragging
