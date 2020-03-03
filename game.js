@@ -1,4 +1,4 @@
-// v0.5.2: Update Stuff
+// v0.5.2.2: A Quick Bugfix
 
 //canvas dimensions
 let w = window.innerWidth*0.5;
@@ -104,7 +104,7 @@ function setup(){
     fogImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/fog.png');
     ghoulImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/ghoul.png');
     startImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/start-img.png');
-    console.log('Clearing the Skies - version 0.5');
+    console.log('Clearing the Skies - version 0.5.2.2');
     createCanvas(w,h);
     noStroke();
     makegrid();
@@ -471,7 +471,7 @@ function storyManager(){
         rect(40,40,w-80,h-120);
         fill(255);
         textSize(20);
-        text(currentStory.slice(0,storyCtr),50,50,w-40,h-140);
+        text(currentStory.slice(0,storyCtr),50,50,w-40,h*5/6);
         if(storyCtr<currentStory.length){
             storyCtr+=1;
         }
@@ -536,9 +536,6 @@ function ghoulManager(){
         }
         if(defeated===1){
             text('The ghoul is angered and stomps on a bunch of people!',60,90,w-100);
-            currentAlert = 'You lose 20 population!';
-            population['Total']-=20;
-            population['Unoccupied']-=20;
             ghouls.splice(currentGhoul,1);
         }
         
