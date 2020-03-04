@@ -1,7 +1,7 @@
-// v0.5.2.2: A Quick Bugfix
+// v0.5.3: Stuff
 
 //canvas dimensions
-let w = window.innerWidth*0.5;
+let w = window.innerWidth/2;
 let h = 500;
 
 //grid dimensions
@@ -10,7 +10,7 @@ let gh = 30;
 
 //cell dimensions
 let wd = 100;
-let hd = 100;
+let hd = 70;
 
 //gamemap array
 grid = [];
@@ -22,7 +22,7 @@ objects = [];
 ghouls = [];
 
 //special objects array
-uniqueobjects = [];
+uniqueobjects = [['test',Math.round(gw/2)-2,Math.round(gh/2),'This is a test']];
 
 //drag variables
 let drag = false;
@@ -44,7 +44,9 @@ let currentAlert = false;
 let alertFade = 100;
 
 //storybox
-let currentStory = `After hundreds of years of walking through the ruined earth, passing stories down from generation to generation, the nomadic lifestyle seems like the only way of life. But it is time to settle down- time to heal the earth, bring back the ways of our fathers, to part the fog that blots the sun. You have been chosen as the leader of a small colony- defend it at all costs.`;
+let currentStory = `After hundreds of years of walking through the ruined earth, passing stories down from generation to generation, the nomadic lifestyle seems like the only way of life. But it is time to settle down - time to heal the earth, bring back the ways of our fathers, to part the fog that obscures the earth and blots the sun. You have been chosen as the leader of a small colony - defend it at all costs.`;
+currentStory = currentStory.split(' ');
+let storyString = '';
 let storyCtr = 0;
 
 //descriptions when hover
@@ -65,10 +67,13 @@ let fogs=[];
 //startscreen
 let startScreen = true;
 
+//Stopping Empire Syndrome since 2020
+let difficulty = 1;
+
 population = {
     'Total':100,
-    'Occupied':0,
-    'Unoccupied':100
+    'Working':0,
+    'Available':100
 }
 
 resources = {
@@ -78,10 +83,10 @@ resources = {
 }
 
 structures = {
-    'basic-hut':[[255,100,100],'A basic hut, for all your basic hut needs!',10],
-    'trapper':[[100,255,100],'A way to keep your people from starving to death!',10],
-    'logger':[[255,150,100],'Employs a squadron of woodpeckers to contribute to climate change',20],
-    'thinker':[[100,100,255],'They think, I think. Therefore they are and I am. Or something.',0]
+    'basic-hut':[[255,100,100],'A basic hut, for all your basic hut needs! \n \nProduces: 1 Population/day \n \nCost: 10 Wood, 20 Available Population, consumes food continously \n',10],
+    'trapper':[[100,255,100],'A way to keep your people from starving to death! \n \nProduces: 3 Food/day \nCost: 20 Wood, 20 Available Population, consumes wood continously \n',10],
+    'logger':[[255,150,100],'Employs a squadron of woodpeckers to contribute to climate change \n \nProduces: 3 Wood/day \nCost: 20 Wood, 20 Available Population, consumes food continously \n',20],
+    'thinker':[[100,100,255],'They think, I think. Therefore they are and I am. Or something. \n \nProduces: 0.25 Science/day \n \nCost: 20 Available Population',0]
 }
 
 let terrainImages;
@@ -104,7 +109,7 @@ function setup(){
     fogImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/fog.png');
     ghoulImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/ghoul.png');
     startImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/start-img.png');
-    console.log('Clearing the Skies - version 0.5.2.2');
+    console.log('Clearing the Skies - version 0.5');
     createCanvas(w,h);
     noStroke();
     makegrid();
@@ -116,6 +121,15 @@ function setup(){
 
 let currentStructure = 0;
 let selectedStructure = Object.keys(structures)[currentStructure];
+
+Array.prototype.contains = function(value) {
+    for(var i=0; i< this.length; i++){
+        if(this[i].toString()===value.toString()){
+            return true;
+        }
+    }
+    return false;
+}
 
 function makegrid(){
     for(let i=0;i<gw;i++){
@@ -157,7 +171,7 @@ function buttonHovered(x,y,width,height){
 function objectExists(i,j) {
     for(let x=0;x<objects.length;x++){
         if(objects[x]['x']===i&&objects[x]['y']===j){
-            objects.splice(x,1);
+            //objects.splice(x,1);
             return true;
         }
     }
@@ -193,11 +207,12 @@ function placeObject(){
             if(mouseX>i*wd+offsetX&&mouseX<i*wd+wd+offsetX&&mouseY>j*hd+offsetY&&mouseY<j*hd+hd+offsetY){
                 if(isInFog(i,j)===false){
                     if(objectExists(i,j)===false){
-                        if(resources['Wood']>=structures[selectedStructure][2] && population['Unoccupied']>10){
+                        if(resources['Wood']>=structures[selectedStructure][2]*difficulty && population['Available']>20){
                             objects.push({'type':selectedStructure,'x':i,'y':j});
-                            resources['Wood']-=structures[selectedStructure][2];
-                            population['Unoccupied']-=20;
-                            population['Occupied']+=20;
+                            resources['Wood']-=structures[selectedStructure][2]*difficulty;
+                            //population['Working']-=20;
+                            population['Available']-=20;
+                            difficulty=Math.round(difficulty*1.75);
                             clearfog();
                         }
                         else{
@@ -317,7 +332,16 @@ function drawMenu(){
 function drawObjects(){
     for(let i=0;i<objects.length;i++){
         fill(structures[objects[i]['type']][0]);
-        rect(objects[i]['x']*wd+5+offsetX,objects[i]['y']*hd+5+offsetY,wd-10,hd-10);
+        //rect(objects[i]['x']*wd+5+offsetX,objects[i]['y']*hd+5+offsetY,wd-10,hd-10);
+        rect(objects[i]['x']*wd+5+offsetX,objects[i]['y']*hd+5+offsetY+hd-wd,wd-10,wd-10);
+    }
+}
+
+function drawUniques(){
+    for(let i=0;i<uniqueobjects.length;i++){
+        fill(255,255,100);
+        //rect(objects[i]['x']*wd+5+offsetX,objects[i]['y']*hd+5+offsetY,wd-10,hd-10);
+        rect(uniqueobjects[i][0]*wd+5+offsetX,uniqueobjects[i][1]*hd+5+offsetY+hd-wd,wd-10,wd-10);
     }
 }
 
@@ -350,7 +374,7 @@ function drawgrid(){
     for(let i=0;i<gw;i++){
         for(let j=0;j<gh;j++){
             if(i*wd+offsetX+wd>0&&j*hd+offsetY+hd>0&&i*wd+offsetX<w&&j*hd+offsetY<h){
-                if(fogs.includes([i,j,1])===false){
+                if(fogs.contains([i,j,1])===false){
                     image(window['i'+grid[i][j].toString()],i*wd+offsetX,j*hd+offsetY,wd,hd);
                 }
             }
@@ -362,7 +386,11 @@ function drawGhouls(){
     tint(255,230);
     for(let i=0;i<ghouls.length;i++){
         if(ghouls[i][0]*wd+offsetX+wd>0&&ghouls[i][1]*hd+offsetY+hd>0&&ghouls[i][0]*wd+offsetX<w&&ghouls[i][1]*hd+offsetY<h){
-            image(ghoulImg,ghouls[i][0]*wd+5+offsetX,ghouls[i][1]*hd+5+offsetY,wd-10,hd-10);
+            //image(ghoulImg,ghouls[i][0]*wd+5+offsetX,ghouls[i][1]*hd+5+offsetY,wd-10,hd-10);
+            if(fogs.contains([ghouls[i][0],ghouls[i][1],0])===false&&fogs.contains([ghouls[i][0],ghouls[i][1],1])===false){
+                image(ghoulImg,ghouls[i][0]*wd+5+offsetX,ghouls[i][1]*hd+5+offsetY+hd-wd,wd-10,wd-10);
+                console.log(ghouls[i]);
+            }
         }
     }
 }
@@ -411,7 +439,7 @@ function resourceManagement(){
             switch(objects[i]['type']){
                 case 'basic-hut':
                     if(resources['Food']>=2){
-                        population['Unoccupied']++;
+                        population['Available']++;
                         population['Total']++;
                         resources['Food']-=2;
                     }
@@ -471,8 +499,9 @@ function storyManager(){
         rect(40,40,w-80,h-120);
         fill(255);
         textSize(20);
-        text(currentStory.slice(0,storyCtr),50,50,w-40,h*5/6);
+        text(storyString,50,50,w-40,h*5/6);
         if(storyCtr<currentStory.length){
+            storyString += currentStory[storyCtr]+' ';
             storyCtr+=1;
         }
         else{
@@ -487,6 +516,7 @@ function storyManager(){
             text("[Please Press this Button]",45,h-50);
             if(buttonClicked(40,h-60,w-80,50)){
                 currentStory=false;
+                storyString = '';
                 storyCtr=0;
                 clearClick=true;
             }
@@ -497,17 +527,35 @@ function storyManager(){
 function descriptionManager(){
     if(currentDescription){
         fill(255, 213, 74,200);
+        let desSeg = '';
+        let bl = 0;
+        for(let ch = 0; ch<=currentDescription.split(' ').length; ch++){
+          if(textWidth(desSeg)>=180){
+            bl+=1;
+            desSeg = currentDescription.split(' ')[ch-1]+' ';
+          }
+          //console.log(desSeg);
+          if(currentDescription.split(' ')[ch]==='\n'){
+              bl+=1;
+          }
+          desSeg+=currentDescription.split(' ')[ch]+' ';
+          
+        }
+        console.log(bl);
+        bl+=1;
+        //let bl = Math.ceil(bw/200)+1;
+        let bh = bl*textSize()/0.75;
         let dx = mouseX;
         let dy = mouseY;
         if(w-mouseX<200){
             dx = mouseX-200;
         }
-        if(h-mouseY<150){
+        if(h-mouseY<bh+20){
             dy = mouseY-150;
         }
-        rect(dx,dy,200,150);
+        rect(dx,dy,200,bh+20);
         fill(0);
-        text(currentDescription,dx+10,dy+10,200-20,150-20);
+        text(currentDescription,dx+10,dy+10,200-20,bh);
     }
 }
 
@@ -558,7 +606,7 @@ function ghoulManager(){
             else{
                 currentAlert = 'You lose 20 population!';
                 population['Total']-=20;
-                population['Unoccupied']-=20;
+                population['Available']-=20;
             }
             currentGhoul=false;
             chosenWeapon=false;
@@ -660,8 +708,9 @@ function draw(){
     }
     else{
         drawgrid();
-        drawGhouls();
         drawfog();
+        drawUniques();
+        drawGhouls();
         drawObjects();
         drawMenu();
         if(drag){
