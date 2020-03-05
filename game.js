@@ -1,4 +1,4 @@
-// v0.5.3: Stuff
+// v0.6.0: Unique Update
 
 //canvas dimensions
 let w = window.innerWidth/2;
@@ -22,7 +22,18 @@ objects = [];
 ghouls = [];
 
 //special objects array
-uniqueobjects = [['test',Math.round(gw/2)-2,Math.round(gh/2),'This is a test']];
+
+//[NAME,X,Y,READ,MESSAGE]
+
+uniqueobjects = [
+    ['Street Sign',Math.round(gw/2)-2,Math.round(gh/2),false,'A green street sign lies half-buried in the ground. Its faded lettering reads: HALF-FOODS GROCERY STORE in 300 METERS. Turn RIGHT at the intersection.'],
+    ['Ancient Advertisement',Math.round(gw/2),Math.round(gh/2)+4,false,'“Come buy your FRESH ORGANIC FRUITS at HALF-FOODS GROCERY STORE before disaster strikes! Take Route I-1101 Northwest.”'],
+    ['Street Sign',Math.round(gw/2)-7,Math.round(gh/2),false,'A green street sign lies half-buried in the ground. Its faded lettering reads: HALF-FOODS GROCERY STORE in 300 METERS. Turn LEFT at the intersection.'],
+    ['A Piece of Half-Burned Paper',Math.round(gw/2)-2,false,Math.round(gh/2)-4,'“Secret Military Outpost. 100 meters west. Meeting time January 10, 2045 - if humanity still exists.”'],
+    ['Street Sign',Math.round(gw/2)-6,Math.round(gh/2)+1,false,'A plate of metal painted with words. The letters are faded, but still readable: “TOTALLY NOT SUSPICIOUS MILITARY BASE IN 200 METERS. GO SOUTHWEST.”'],
+    ['Street Sign',Math.round(gw/2)-2,Math.round(gh/2)-10,false,`An entry from a journal: "The bombs have hit. If anyone's left after this tragedy, go to my laboratory. I've been working on some things there..."`]
+];
+
 
 //drag variables
 let drag = false;
@@ -175,6 +186,11 @@ function objectExists(i,j) {
             return true;
         }
     }
+    for(let n=0;n<uniqueobjects.length;n++){
+        if(i===uniqueobjects[n][1]&&j===uniqueobjects[n][2]){
+            return true;
+        }
+    }    
     return false;
 }
 
@@ -185,6 +201,23 @@ function nearGhoul(){
                 for(let j=0; j<objects.length;j++){
                     if(Math.hypot(ghouls[i][0]-objects[j]['x'],ghouls[i][1]-objects[j]['y'])<=1.5){
                         currentGhoul = i;
+                    }
+                }
+            }
+        }
+    }
+}
+
+function nearUnique(){
+    if(currentStory===false){
+        for(let k=0; k<3; k++){
+            for(let i=0; i<uniqueobjects.length;i++){
+                if(uniqueobjects[i][3] === false){
+                    for(let j=0; j<objects.length;j++){
+                        if(Math.hypot(uniqueobjects[i][1]-objects[j]['x'],uniqueobjects[i][2]-objects[j]['y'])<=1){
+                            uniqueobjects[i][3] = true;
+                            currentStory = uniqueobjects[i][4].split(' ');
+                        }
                     }
                 }
             }
@@ -212,8 +245,10 @@ function placeObject(){
                             resources['Wood']-=structures[selectedStructure][2]*difficulty;
                             //population['Working']-=20;
                             population['Available']-=20;
-                            difficulty=Math.round(difficulty*1.75);
+                            //difficulty=Math.round(difficulty*1.75);
                             clearfog();
+                            nearGhoul();
+                            nearUnique();
                         }
                         else{
                             currentAlert='Not enough resources!';
@@ -260,6 +295,9 @@ function drawMenu(){
 
         for(var key in population){
             text(key+': '+population[key].toString(),w-menuWidth+20,itemPos);
+            if(buttonHovered(w-menuWidth+20,itemPos,menuWidth-20,20)){
+                currentDescription = key+' Population';
+            }
             itemPos += 20;
         }
 
@@ -275,6 +313,9 @@ function drawMenu(){
 
         for(var key in resources){
             text(key+': '+resources[key].toString(),w-menuWidth+20,itemPos);
+            if(buttonHovered(w-menuWidth+20,itemPos,menuWidth-20,20)){
+                currentDescription = key;
+            }
             itemPos += 20;
         }
 
@@ -312,9 +353,9 @@ function drawMenu(){
             }
             itemPos += 20;
         }
-        if(popupOpen===false){
-            currentDescription = false;
-        }
+        //if(popupOpen===false){
+        //    currentDescription = false;
+        //}
     }
     else{
         fill(50);
@@ -341,7 +382,7 @@ function drawUniques(){
     for(let i=0;i<uniqueobjects.length;i++){
         fill(255,255,100);
         //rect(objects[i]['x']*wd+5+offsetX,objects[i]['y']*hd+5+offsetY,wd-10,hd-10);
-        rect(uniqueobjects[i][0]*wd+5+offsetX,uniqueobjects[i][1]*hd+5+offsetY+hd-wd,wd-10,wd-10);
+        rect(uniqueobjects[i][1]*wd+5+offsetX,uniqueobjects[i][2]*hd+5+offsetY+hd-wd,wd-10,wd-10);
     }
 }
 
@@ -405,8 +446,7 @@ function drawStart(){
     text('Clearing the Skies',70,h/2-90/2);
     
     textSize(10);
-    text('v.0.5.2',70,h/2-90/2+30);
-    
+    text('v.0.6.0',70,h/2-90/2+30);
     
     textSize(20);
     if(buttonHovered(70,h/2-90/2+60,w-140,50)){
@@ -499,7 +539,7 @@ function storyManager(){
         rect(40,40,w-80,h-120);
         fill(255);
         textSize(20);
-        text(storyString,50,50,w-40,h*5/6);
+        text(storyString,50,50,w-100,h-120);
         if(storyCtr<currentStory.length){
             storyString += currentStory[storyCtr]+' ';
             storyCtr+=1;
@@ -526,6 +566,7 @@ function storyManager(){
 
 function descriptionManager(){
     if(currentDescription){
+        textSize(15);
         fill(255, 213, 74,200);
         let desSeg = '';
         let bl = 0;
@@ -551,7 +592,7 @@ function descriptionManager(){
             dx = mouseX-200;
         }
         if(h-mouseY<bh+20){
-            dy = mouseY-150;
+            dy = mouseY-bh;
         }
         rect(dx,dy,200,bh+20);
         fill(0);
@@ -571,7 +612,7 @@ function ghoulManager(){
             defeated=-1;
         }
         let ghoulChoice = chosenWeapon-1+defeated;
-        if(chosenWeapon-1+defeated>ghoulWeapons.length){
+        if(chosenWeapon-1+defeated>ghoulWeapons.length-1){
             ghoulChoice = (chosenWeapon-1+defeated)%ghoulWeapons.length;
         }
         if(chosenWeapon-1+defeated<0){
@@ -641,8 +682,23 @@ function ghoulManager(){
     }
 }
 
+function uniqueManager(){
+    for(let i=0;i<uniqueobjects.length;i++){
+        if(buttonHovered(uniqueobjects[i][1]*wd+5+offsetX,uniqueobjects[i][2]*hd+5+offsetY+hd-wd,wd-10,wd-10)){
+            currentDescription=uniqueobjects[i][0]+' \n[Click to read]';
+        }
+        if(buttonClicked(uniqueobjects[i][1]*wd+5+offsetX,uniqueobjects[i][2]*hd+5+offsetY+hd-wd,wd-10,wd-10)){
+            currentStory=false;
+            storyCtr = 0;
+            storyString = '';
+            currentStory=uniqueobjects[i][4].split(' ');
+        }
+    }
+}
+
 setInterval(resourceManagement,2000);
 setInterval(nearGhoul,2000);
+//setInterval(nearUnique,2000);
 
 /* p5 functions*/
 
@@ -702,20 +758,33 @@ function keyPressed(){
     }
 }
 
+
+function windowResized() {
+    if(window.innerWidth<=800){
+        w = window.innerWidth-40;
+    }
+    else{
+        w = window.innerWidth/2;
+    }
+    resizeCanvas(w, 500);
+}
+
 function draw(){
+    currentDescription = false;
     if(startScreen){
         drawStart();
     }
     else{
         drawgrid();
-        drawfog();
         drawUniques();
+        drawfog();
         drawGhouls();
         drawObjects();
         drawMenu();
         if(drag){
             gridDrag();
         }
+        uniqueManager();
         descriptionManager()
         alertManager();
         storyManager();
