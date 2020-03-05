@@ -1,19 +1,28 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>[Insert Game Here]</title>
+        <title>Clearing the Skies</title>
         <meta charset="UTF-8">
         <script src="https://cdn.jsdelivr.net/npm/p5@0.10.2/lib/p5.js"></script>
         <script src="game.js"></script>
     </head>
     <body>
         <style>
-            html,body{
+            html{
+                margin:0px;
+            }
+            body{
                 font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 background-color:rgb(20,20,20);
-                margin-left:12%;
-                margin-right:12%;
+                margin-left:25%;
+                margin-right:25%;
                 color:whitesmoke;
+            }
+            @media screen and (max-width:800px){
+                body{
+                    margin-left:20px;
+                    margin-right:20px;
+                }
             }
             button{
                 margin-right:20px;
@@ -28,24 +37,36 @@
                 color:black;
                 border:none;
             }
+            button:hover{
+                cursor:pointer;
+                background-image:linear-gradient(to right, seagreen, rgb(68, 159, 165));
+            }
             .pop-box{
                 color:black;
                 border-radius:10px;
-                background-image:linear-gradient(to right,white,whitesmoke);
+                background-image:linear-gradient(to right,rgba(255,255,255,0.9),rgba(255,255,255,0.7));
                 margin-top:10px;
                 margin-left:10px;
                 padding:10px;
                 width:fit-content;
                 position:absolute;
                 box-shadow:0px 0px 10px black;
+
+            }
+            #instructions{
+                background-image:linear-gradient(to right, fuchsia, rgb(231, 231, 91));
+            }
+            #instructions:hover{
+                cursor:pointer;
+                background-image:linear-gradient(to right, seagreen, rgb(68, 159, 165));
             }
         </style>
-        <h1>[Insert Game Here]</h1>
-        <p>v0.4.1</p>
-        <button id='instructions' onClick='openInstructions()'>Instructions</button>
+        <h1>Clearing the Skies</h1>
+        <p>A game name that's poetic, for once</p>
+        <button id='instructions' onClick='openInstructions()'>✕</button>
         <button id='credits' onClick='openCredits()'>Credits</button>
         <button id='help' onClick='openHelp()'>Help!</button>
-        <div id='p-instructions' style='display:none;'class='pop-box'>
+        <div id='p-instructions' style='display:block;'class='pop-box'>
                 <h2>How To Play</h2>
                 <p>Objective:
                 <ul>
@@ -63,10 +84,12 @@
         <div id='p-help' style='display:none;' class='pop-box'>
             <h2>Why does the game not appear?</h2>
             <p>If you're using Internet Explorer, try another browser.</p>
+            <h2>Why is the game so laggy?</h2>
+            <p>It's probably because your computer is a little slow - this game is known to consume a lot of processing power.</p>
             <h2>Why is the map covered with smoke?</h2>
             <p>It's to stop players from finding the goal too easily... did I accidentally reveal too much?</p>
             <h2>Why is there a help section?</h2>
-            <p>Why did you click on it for?</p>
+            <p>What did you click on it for?</p>
         </div>
         <br style = 'clear:both;'>
         <script>
