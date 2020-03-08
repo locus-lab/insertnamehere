@@ -1,4 +1,4 @@
-// v0.6.0: Unique Update
+// v0.6.2: Idea Generator
 
 //canvas dimensions
 let w = window.innerWidth/2;
@@ -9,8 +9,8 @@ let gw = 30;
 let gh = 30;
 
 //cell dimensions
-let wd = 100;
-let hd = 70;
+let wd = 200;
+let hd = 200;
 
 //gamemap array
 grid = [];
@@ -26,7 +26,7 @@ ghouls = [];
 //[NAME,X,Y,READ,MESSAGE]
 
 uniqueobjects = [
-    ['Street Sign',Math.round(gw/2)-2,Math.round(gh/2),false,'A green street sign lies half-buried in the ground. Its faded lettering reads: HALF-FOODS GROCERY STORE in 300 METERS. Turn RIGHT at the intersection.'],
+    ['Street Sign',Math.round(gw/2)-3,Math.round(gh/2),false,'A green street sign lies half-buried in the ground. Its faded lettering reads: HALF-FOODS GROCERY STORE in 300 METERS. Turn RIGHT at the intersection.'],
     ['Ancient Advertisement',Math.round(gw/2),Math.round(gh/2)+4,false,'“Come buy your FRESH ORGANIC FRUITS at HALF-FOODS GROCERY STORE before disaster strikes! Take Route I-1101 Northwest.”'],
     ['Street Sign',Math.round(gw/2)-7,Math.round(gh/2),false,'A green street sign lies half-buried in the ground. Its faded lettering reads: HALF-FOODS GROCERY STORE in 300 METERS. Turn LEFT at the intersection.'],
     ['A Piece of Half-Burned Paper',Math.round(gw/2)-2,false,Math.round(gh/2)-4,'“Secret Military Outpost. 100 meters west. Meeting time January 10, 2045 - if humanity still exists.”'],
@@ -93,12 +93,52 @@ resources = {
     'Science™':0
 }
 
+//Structures
+//[NAME,COLOR,DESCRIPTION,WOODCOST,TECHREQUIRED]
+
 structures = {
-    'basic-hut':[[255,100,100],'A basic hut, for all your basic hut needs! \n \nProduces: 1 Population/day \n \nCost: 10 Wood, 20 Available Population, consumes food continously \n',10],
-    'trapper':[[100,255,100],'A way to keep your people from starving to death! \n \nProduces: 3 Food/day \nCost: 20 Wood, 20 Available Population, consumes wood continously \n',10],
-    'logger':[[255,150,100],'Employs a squadron of woodpeckers to contribute to climate change \n \nProduces: 3 Wood/day \nCost: 20 Wood, 20 Available Population, consumes food continously \n',20],
-    'thinker':[[100,100,255],'They think, I think. Therefore they are and I am. Or something. \n \nProduces: 0.25 Science/day \n \nCost: 20 Available Population',0]
+    'basic_hut':[[255,100,100],'A basic hut, for all your basic hut needs! \n \nProduces: 1 Population/day \n \nCost: 10 Wood, 20 Available Population, consumes food continously \n',10,'start'],
+    'hunter':[[100,255,100],'A way to keep your people from starving to death! \n \nProduces: 3 Food/day \nCost: 20 Wood, 20 Available Population, consumes wood continously \n',10,'start'],
+    'logger':[[255,150,100],'Employs a squadron of woodpeckers to contribute to climate change \n \nProduces: 3 Wood/day \nCost: 20 Wood, 20 Available Population, consumes food continously \n',20,'start'],
+    'thinker':[[100,100,255],'They think, I think. Therefore they are and I am. Or something. \n \nProduces: 0.25 Science/day \n \nCost: 20 Available Population',0,'start']
 }
+
+/*structures = [
+    ['basic_hut',[255,100,100],'A basic hut, for all your basic hut needs! \n \nProduces: 1 Population/day \n \nCost: 10 Wood, 20 Available Population, consumes food continously \n',10,'start'],
+    ['hunter',[100,255,100],'A way to keep your people from starving to death! \n \nProduces: 3 Food/day \nCost: 20 Wood, 20 Available Population, consumes wood continously \n',10,'start'],
+    ['logger',[255,150,100],'Employs a squadron of woodpeckers to contribute to climate change \n \nProduces: 3 Wood/day \nCost: 20 Wood, 20 Available Population, consumes food continously \n',20,'start'],
+    ['thinker',[100,100,255],'They think, I think. Therefore they are and I am. Or something. \n \nProduces: 0.25 Science/day \n \nCost: 20 Available Population',0,'start']
+];*/
+
+//Technology Tree
+
+researched = ['start'];
+
+//[NAME,LEVEL,COST,PREREQUISITES]
+techtree = [
+    ['start',0,0,'start'],
+    ['stuff',1,5,'start'],
+    ['basic',1,5,'start'],
+    ['moreStuff',2,5,'stuff'],
+    ['test',2,5,'basic'],
+    ['nuclear',3,10,'test']
+];
+
+let treeopen = false;
+
+let mOffsetX = 20;
+let mOffsetY = 0;
+
+let mpoffsetX = 20;
+let mpoffsetY = 0;
+
+levelCrowdedness = [0,0,0,0];
+
+for(let p=0;p<techtree.length;p++){
+    levelCrowdedness[techtree[p][1]]+=1;
+}
+
+//images
 
 let terrainImages;
 
@@ -108,19 +148,22 @@ let ghoulImg;
 let startImg;
 
 function setup(){
-    i1=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/drygrass.png');
-    i2=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/drygrass2.png');
-    i3=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/grasswasteland.png');
-    i4=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/lake.png');
-    i5=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/wasteland.png');
-    i6=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/wastelandruin.png');
-    terrainImages=[
-        i1,i2,i3,i4,i5,i6
-    ]
+    t1=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/drygrass.png');
+    t2=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/drygrass2.png');
+    t3=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/grasswasteland.png');
+    t4=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/lake.png');
+    t5=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/wasteland.png');
+    t6=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/wastelandruin.png');
+    
+    basic_hut=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/basic-hut.png');
+    hunter=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/hunter.png');
+    logger=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/logger.png');
+    thinker=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/thinker.png');
+
     fogImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/fog.png');
     ghoulImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/ghoul.png');
     startImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/start-img.png');
-    console.log('Clearing the Skies - version 0.5');
+    console.log('Clearing the Skies - version 0.6.2');
     createCanvas(w,h);
     noStroke();
     makegrid();
@@ -132,6 +175,16 @@ function setup(){
 
 let currentStructure = 0;
 let selectedStructure = Object.keys(structures)[currentStructure];
+
+Object.filter = function( obj, predicate) {
+    var result = {}, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key) && !predicate(obj[key])) {
+            result[key] = obj[key];
+        }
+    }
+    return result;
+};
 
 Array.prototype.contains = function(value) {
     for(var i=0; i< this.length; i++){
@@ -146,7 +199,7 @@ function makegrid(){
     for(let i=0;i<gw;i++){
         n = [];
         for(let j=0;j<gh;j++){
-            n.push(round(Math.random()*(terrainImages.length-1))+1);
+            n.push(round(Math.random()*(6-1))+1);
             fogs.push([i,j,1]);
         }
         grid.push(n);
@@ -263,7 +316,7 @@ function placeObject(){
     }
 }
 
-/* Drawing functions */
+/* Menu Drawing Functions */
 
 function drawMenu(){
     if(menuOpen){
@@ -319,14 +372,29 @@ function drawMenu(){
             itemPos += 20;
         }
 
+        //Research Tree Button
+        if(buttonHovered(w-menuWidth+20,220,menuWidth-40,30)){
+            fill(100,100,255);
+            if(buttonClicked(w-menuWidth+20,220,menuWidth-40,30)){
+                treeopen = true;
+            }
+        }
+        else{
+            fill(100,255,100);
+        }
+        rect(w-menuWidth+20,220,menuWidth-40,30);
+        fill(0);
+        textSize(20);
+        text("R&D",w-menuWidth+25,225);
+
         //structure title block
         fill(100,100,255);
         textSize(20);
-        text("Structures",w-menuWidth+20,220);
+        text("Structures",w-menuWidth+20,260);
 
         //structure listing
         textSize(15);
-        itemPos = 250;
+        itemPos = 290;
 
         //popup descriptions
         popupOpen = false;
@@ -370,11 +438,89 @@ function drawMenu(){
     }
 }
 
+function drawTechtree(){
+    if(treeopen){
+        clearClick = true;
+        textAlign(LEFT,TOP);
+
+        //main rect
+        fill(0,230);
+        rect(0,0,w,h);
+
+        //nodes
+        textSize(15);
+        textAlign(CENTER,CENTER);
+        for(let i=0;i<techtree.length;i++){
+            let owned;
+            if(researched.includes(techtree[i][0])){
+                fill(100,255,100);
+                owned = '[Owned]';
+            }
+            else if(researched.includes(techtree[i][3])){
+                fill(100);
+                owned = '[Click to Research]';
+            }
+            else{
+                fill(70);
+                owned = '[Requires '+techtree[i][3]+']';
+            }
+            let currentCrowdedness = levelCrowdedness[techtree[i][1]];
+            let yVal=techtree.filter((z)=>{return z[1]==techtree[i][1];});
+            yVal=yVal.sort((a,b)=>a[2]-b[2]).findIndex((x)=>{return techtree[i]==x;})+1;
+            yVal*=20+(h-20-50-20)/(currentCrowdedness+1);
+            rect(techtree[i][1]*120+mOffsetX,yVal+mOffsetY,100,50);
+            fill(0);
+            text(techtree[i][0],techtree[i][1]*120+mOffsetX+100/2,yVal+mOffsetY+50/2);
+
+            if(buttonHovered(techtree[i][1]*120+mOffsetX,yVal+mOffsetY,100,50)){
+                let structs = 'None';
+                structs = Object.keys(Object.filter(structures,(x)=>{return techtree[i][0]==x[4]})).toString().replace(/[,]/g," \n - ");
+                currentDescription = techtree[i][0]+' \n \nCost: '+techtree[i][2].toString()+' Science \nStructures: \n - '+structs+' \n \n'+owned;
+            }
+            if(buttonClicked(techtree[i][1]*120+mOffsetX,yVal+mOffsetY,100,50)){
+                if(researched.includes(techtree[i][0])==false&&researched.includes(techtree[i][3])){
+                    researched.push(techtree[i][0]);
+                    resources['Science™']-=techtree[i][2];
+                }
+            }
+        }
+
+        textAlign(LEFT,TOP);
+        //title-block
+        textSize(30);
+        fill(100,100,255);
+        text('Idea Factory',20,20);
+
+        //exit-button
+        textAlign(CENTER,CENTER);
+        textSize(20);
+        if(buttonHovered(w-100,20,80,30)){
+            fill(100,255,100);
+        }
+        else{
+            fill(255,100,100);
+        }
+        rect(w-100,20,80,30);
+        fill(0);
+        text('Exit',w-100,20,80,30);
+        if(buttonClicked(w-100,20,80,30)){
+            treeopen = false;
+            mOffsetX = 20;
+            mOffsetY = 0;
+            mpoffsetX = 20;
+            mpoffsetY = 0;
+        }
+    }
+}
+
+/* Map Drawing Functions */
+
 function drawObjects(){
     for(let i=0;i<objects.length;i++){
-        fill(structures[objects[i]['type']][0]);
+        //fill(structures[objects[i]['type']][0]);
         //rect(objects[i]['x']*wd+5+offsetX,objects[i]['y']*hd+5+offsetY,wd-10,hd-10);
-        rect(objects[i]['x']*wd+5+offsetX,objects[i]['y']*hd+5+offsetY+hd-wd,wd-10,wd-10);
+        //rect(objects[i]['x']*wd+5+offsetX,objects[i]['y']*hd+5+offsetY+hd-wd,wd-10,wd-10);
+        image(window[objects[i]['type']],objects[i]['x']*wd+5+offsetX,objects[i]['y']*hd+5+offsetY+hd-wd,wd-10,wd-10);
     }
 }
 
@@ -416,7 +562,7 @@ function drawgrid(){
         for(let j=0;j<gh;j++){
             if(i*wd+offsetX+wd>0&&j*hd+offsetY+hd>0&&i*wd+offsetX<w&&j*hd+offsetY<h){
                 if(fogs.contains([i,j,1])===false){
-                    image(window['i'+grid[i][j].toString()],i*wd+offsetX,j*hd+offsetY,wd,hd);
+                    image(window['t'+grid[i][j].toString()],i*wd+offsetX,j*hd+offsetY,wd,hd);
                 }
             }
         }
@@ -430,7 +576,22 @@ function drawGhouls(){
             //image(ghoulImg,ghouls[i][0]*wd+5+offsetX,ghouls[i][1]*hd+5+offsetY,wd-10,hd-10);
             if(fogs.contains([ghouls[i][0],ghouls[i][1],0])===false&&fogs.contains([ghouls[i][0],ghouls[i][1],1])===false){
                 image(ghoulImg,ghouls[i][0]*wd+5+offsetX,ghouls[i][1]*hd+5+offsetY+hd-wd,wd-10,wd-10);
-                console.log(ghouls[i]);
+            }
+        }
+    }
+}
+
+function drawCursor(){
+    for(let i=0;i<gw;i++){
+        for(let j=0;j<gh;j++){
+            if(mouseX>i*wd+offsetX&&mouseX<i*wd+wd+offsetX&&mouseY>j*hd+offsetY&&mouseY<j*hd+hd+offsetY){
+                if(isInFog(i,j)===false){
+                    fill(100,100,255,100);
+                }
+                else{
+                    fill(100,100);
+                }
+                rect(i*wd+offsetX,j*hd+offsetY+hd-wd,wd,wd);
             }
         }
     }
@@ -461,14 +622,20 @@ function drawStart(){
     if(buttonClicked(70,h/2-90/2+60,w-140,50)){
         startScreen = false;
         clearClick = true;
-        objects.push({'type':'basic-hut','x':Math.round(gw/2),'y':Math.round(gh/2)});
+        objects.push({'type':'basic_hut','x':Math.round(gw/2),'y':Math.round(gh/2)});
         clearfog();
     }
 }
 
 function gridDrag(){
-    offsetX = mouseX-prevMouseX+poffsetX;
-    offsetY = mouseY-prevMouseY+poffsetY;
+    if(treeopen){
+        mOffsetX = mouseX-prevMouseX+mpoffsetX;
+        mOffsetY = mouseY-prevMouseY+mpoffsetY;
+    }
+    else{
+        offsetX = mouseX-prevMouseX+poffsetX;
+        offsetY = mouseY-prevMouseY+poffsetY;        
+    }
 }
 
 /* Managers */
@@ -477,7 +644,7 @@ function resourceManagement(){
     if(currentStory===false){
         for(let i=0;i<objects.length;i++){
             switch(objects[i]['type']){
-                case 'basic-hut':
+                case 'basic_hut':
                     if(resources['Food']>=2){
                         population['Available']++;
                         population['Total']++;
@@ -487,7 +654,7 @@ function resourceManagement(){
                         currentAlert='Not enough food; population generation stopped';
                     }
                     break;
-                case 'trapper':
+                case 'hunter':
                     if(resources['Wood']>=1){
                         resources['Food']+=3;
                         resources['Wood']-=1;
@@ -566,6 +733,7 @@ function storyManager(){
 
 function descriptionManager(){
     if(currentDescription){
+        textAlign(LEFT,TOP);
         textSize(15);
         fill(255, 213, 74,200);
         let desSeg = '';
@@ -582,7 +750,6 @@ function descriptionManager(){
           desSeg+=currentDescription.split(' ')[ch]+' ';
           
         }
-        console.log(bl);
         bl+=1;
         //let bl = Math.ceil(bw/200)+1;
         let bh = bl*textSize()/0.75;
@@ -726,6 +893,8 @@ function mouseReleased(){
         drag = false;
         poffsetX = offsetX;
         poffsetY = offsetY;
+        mpoffsetX = mOffsetX;
+        mpoffsetY = mOffsetY;
     }
 }
 
@@ -775,20 +944,31 @@ function draw(){
         drawStart();
     }
     else{
-        drawgrid();
-        drawUniques();
-        drawfog();
-        drawGhouls();
-        drawObjects();
-        drawMenu();
-        if(drag){
-            gridDrag();
+        if(treeopen){
+            drawTechtree();
+            if(drag){
+                gridDrag();
+            }
+            descriptionManager();
+            alertManager();
         }
-        uniqueManager();
-        descriptionManager()
-        alertManager();
-        storyManager();
-        ghoulManager();
+        else{
+            drawgrid();
+            drawUniques();
+            drawfog();
+            drawGhouls();
+            drawObjects();
+            drawCursor();
+            drawMenu();
+            if(drag){
+                gridDrag();
+            }
+            uniqueManager();
+            descriptionManager();
+            storyManager();
+            ghoulManager();
+            alertManager();
+        }
     }
 }
 
