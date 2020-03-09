@@ -1,0 +1,207 @@
+<html>
+<head>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
+</head>
+<body>
+<style>
+    body{
+        font-family:Arial, Helvetica, sans-serif;
+    }
+    #results{
+        font-size:10pt;
+    }
+</style>
+<h1>Cartographer</h1>
+<div id = 'mapbox'></div>
+<div id = 'resultsbox'>
+<button onclick = "document.getElementById('results').innerHTML = JSON.stringify(grid);">Show Results</button>
+<div id = 'results'>
+</div>
+</div>
+<script>
+grid = [];
+objects = [];
+
+let w = 800;
+let h = 500;
+
+let wd = 70;
+let hd = 70;
+
+let gw = 50;
+let gh = 20;
+
+let offsetX = 0;
+let offsetY = 0;
+
+let prevMouseX = 0;
+let prevMouseY = 0;
+
+let poffsetX = 0;
+let poffsetY = 0;
+
+let drag = false;
+
+let menuOpen = true;
+
+//let t0,t1,t2,t3,t4,t5,t6;
+
+function setup(){
+    t0=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/ocean.png');
+    t1=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/drygrass.png');
+    t2=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/drygrass2.png');
+    t3=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/grasswasteland.png');
+    t4=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/lake.png');
+    t5=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/wasteland.png');
+    t6=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/wastelandruin.png');
+    let c = createCanvas(w,h);
+    c.parent('mapbox');
+    noStroke();
+    makegrid();
+}
+
+tiles = [
+    'ocean',
+    'drygrass',
+    'drygrass2',
+    'transition',
+    'lake',
+    'wasteland',
+    'ruin'
+]
+
+let currentStructure = 1;
+
+function placeObject(){
+    for(let i=0;i<gw;i++){
+        for(let j=0;j<gh;j++){
+            if(mouseX>=i*wd+offsetX&&mouseX<=i*wd+wd+offsetX&&mouseY>=j*hd+offsetY&&mouseY<=j*hd+hd+offsetY){
+                if(true){
+                    grid[i][j] = currentStructure;
+                }
+            }
+        }
+    }
+}
+
+function makegrid(){
+    for(let i=0;i<gw;i++){
+        n = [];
+        for(let j=0;j<gh;j++){
+            n.push(-1);
+        }
+        grid.push(n);
+    }
+}
+
+function drawgrid(){
+    for(let i=0;i<gw;i++){
+        for(let j=0;j<gh;j++){
+            //console.log(window['t'+grid[i][j].toString()])
+            if(grid[i][j]!=-1){
+                image(window['t'+grid[i][j].toString()],i*wd+offsetX,j*hd+offsetY,wd,hd);
+            }
+        }
+    }
+}
+
+function drawbackground(){
+    background(0);
+    for(let i=0;i<=w/wd+2;i++){
+        for(let j=0;j<=h/hd+2;j++){
+            image(t0,(i-1)*wd+offsetX%wd,(j-1)*hd+offsetY%hd,wd,hd);
+        }
+    }
+}
+
+function gridDrag(){
+    offsetX = mouseX-prevMouseX+poffsetX;
+    offsetY = mouseY-prevMouseY+poffsetY;
+    console.log(prevMouseX);
+}
+
+/* p5 functions*/
+
+function mouseWheel(){
+    if(mouseX>0&&mouseX<w&&mouseY>0&&mouseY<h){
+    if(event.delta<0){
+        wd+=5;
+        hd+=5;
+    }
+    else{
+        wd-=5;
+        hd-=5;
+    }
+    }
+}
+
+function mouseClicked(){
+    if(mouseButton===LEFT&&mouseX>0&&mouseX<w&&mouseY>0&&mouseY<h){
+        placeObject();
+    }
+}
+
+function mousePressed(){
+    if(mouseButton===CENTER || mouseButton===RIGHT){
+        drag = true;
+        prevMouseX = mouseX;
+        prevMouseY = mouseY;
+    }
+}
+
+function mouseReleased(){
+    if(mouseButton===CENTER||mouseButton===RIGHT){
+        drag = false;
+        poffsetX = offsetX;
+        poffsetY = offsetY;
+    }
+}
+
+function keyPressed(){
+    if(keyCode===UP_ARROW){
+        currentStructure--;
+        if(currentStructure<0){
+            currentStructure = tiles.length-1;
+        }
+        console.log(currentStructure);
+    }
+    if(keyCode===DOWN_ARROW){
+        currentStructure++;
+        if(currentStructure>=tiles.length){
+            currentStructure = 0;
+        }
+    }
+}
+
+function draw(){
+    drawbackground();
+    drawgrid();
+    drawCursor();
+    textAlign(LEFT,TOP);
+    fill(0);
+    text(tiles[currentStructure],20,20);
+    if(drag){
+        gridDrag();
+    }
+    if(mouseIsPressed){
+        if(mouseButton===LEFT&&mouseX>0&&mouseX<w&&mouseY>0&&mouseY<h){
+            placeObject();
+        }
+    }
+}
+
+function drawCursor(){
+    for(let i=0;i<gw;i++){
+        for(let j=0;j<gh;j++){
+            if(mouseX>i*wd+offsetX&&mouseX<i*wd+wd+offsetX&&mouseY>j*hd+offsetY&&mouseY<j*hd+hd+offsetY){
+                fill(100,100,255,100);
+                rect(i*wd+offsetX,j*hd+offsetY+hd-wd,wd,wd);
+            }
+        }
+    }
+}
+
+window.addEventListener("contextmenu", ( e )=> { e.preventDefault(); return false; } );
+</script>
+</body>
+</html>
