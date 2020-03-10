@@ -1,28 +1,51 @@
 <html>
 <head>
-<script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
+    <title>Cartographer</title>
 </head>
 <body>
 <style>
     body{
         font-family:Arial, Helvetica, sans-serif;
     }
+    #mapbox{
+        width:90%;
+    }
+    #resultsbox{
+        width:90%;
+    }
+
     #results{
-        font-size:10pt;
+        font-size:5pt;
+    }
+    textarea{
+        width:100%;
+        height:200;
+    }
+    button{
+        background-color:rgb(100,200,255);
+        padding:10px;
+        border:none;
+    }
+    h1{
+        font-weight:lighter;
     }
 </style>
-<h1>Cartographer</h1>
+<h1><b>Cartographer</b> Gamemap Maker</h1>
 <div id = 'mapbox'></div>
+<br>
 <div id = 'resultsbox'>
-<button onclick = "document.getElementById('results').innerHTML = JSON.stringify(grid);">Show Results</button>
-<div id = 'results'>
-</div>
+<button onclick = "document.getElementById('results').value = JSON.stringify(grid);">Update/Show Results</button>
+<button onclick = "copyresults()">Copy Results to Clipboard</button>
+<br>
+<textarea type=text id = 'results'>
+</textarea>
 </div>
 <script>
 grid = [];
 objects = [];
 
-let w = 800;
+let w = window.innerWidth*0.9;
 let h = 500;
 
 let wd = 70;
@@ -58,6 +81,7 @@ function setup(){
     c.parent('mapbox');
     noStroke();
     makegrid();
+    grid[Math.round(gw/2)][Math.round(gh/2)] = 5;
 }
 
 tiles = [
@@ -128,7 +152,7 @@ function mouseWheel(){
         wd+=5;
         hd+=5;
     }
-    else{
+    else if(wd>20){
         wd-=5;
         hd-=5;
     }
@@ -178,8 +202,18 @@ function draw(){
     drawgrid();
     drawCursor();
     textAlign(LEFT,TOP);
+    fill(235, 210, 52,200);
+    rect(0,0,200,100);
     fill(0);
-    text(tiles[currentStructure],20,20);
+    textSize(18);
+    text('selected: '+tiles[currentStructure],20,20);
+    if(currentStructure===0){
+        text('previous: '+tiles[tiles.length-1],20,40);
+    }
+    else{
+        text('previous: '+tiles[(currentStructure-1)%(tiles.length-1)],20,40);
+    }
+    text('next: '+tiles[(currentStructure+1)%tiles.length],20,60);
     if(drag){
         gridDrag();
     }
@@ -196,9 +230,18 @@ function drawCursor(){
             if(mouseX>i*wd+offsetX&&mouseX<i*wd+wd+offsetX&&mouseY>j*hd+offsetY&&mouseY<j*hd+hd+offsetY){
                 fill(100,100,255,100);
                 rect(i*wd+offsetX,j*hd+offsetY+hd-wd,wd,wd);
+                fill(255);
+                text(`(${i},${j})`,i*wd+offsetX+5,j*hd+offsetY+hd-wd+5);
             }
         }
     }
+}
+
+function copyresults() {
+  let copyText = document.getElementById("results");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+  document.execCommand("copy");
 }
 
 window.addEventListener("contextmenu", ( e )=> { e.preventDefault(); return false; } );
