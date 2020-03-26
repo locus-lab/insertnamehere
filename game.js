@@ -1,4 +1,4 @@
-//0.6.4: Fully Winnable Prototype
+//0.6.5: General Improvement
 
 //canvas dimensions
 let w = window.innerWidth/2;
@@ -14,6 +14,8 @@ let hd = 100;
 
 //gamemap array
 //grid = [];
+
+let hoveringOverButton = false;
 
 //structure array
 objects = [];
@@ -37,7 +39,7 @@ ghouls = [];
 uniqueobjects = [
     ['Nuclear Killswitch',67,6,false,''],
     ['Grocery Store',37,27,false,['While the majority of the green lettering on the ancient sign had crumbled, you can still make out the words ‘Half Foods Grocers: food for twice the price”. After busting through the window, your crew explores the rest of the store, staying away from the gaping hole in the ceiling from which small metal fragments periodically tumble.','In one of the few cash registers that avoided rust brought on by the torrential rain, you find a small cloth-bound notebook. The majority of the pages have been hastily torn out or faded by the elements- but you manage to make out some sparse lettering: They’ve finally done it. Those little ***** have dropped them on us. The radio says eighty minutes until all heck breaks loose. I’m going to go find Dan and see if he knows anything else. After that, the ink veers off the page. You shut the book and hide it away, but it remains open in your mind for hours. Who was this person?']],
-    ['Ballistic Early Warning System Tower',34,3,false,["In spite of the darkness of night, it's the tallest thing you’ve ever seen - one of your group claims that as a child he lived in the ruins of massive stone giants miles taller than this one, but he’s well known for his ridiculous tales. The concrete tower juts out of the ground at an angle, and ivy snakes up its walls. Despite its formidable appearance, it is easily entered through one of the many gaping holes in its side.","After ascending the winding spiral staircase for what seems like forever, you and your team of reckless villagers see a source of light emanating from a small room marked ‘WC’. Inside, near the porcelain remains of a sink, lies a small monitor - its screen fractured down the middle yet nevertheless giving out the distinct blue glow that the people of the past seemed to obsess over. You lean down, the only one in the group brave enough to attempt interaction with it - and press one of the many buttons that seem to have been embedded in a square below it. Suddenly, it lights up, claiming in the same writing of the journal claiming the presence of a ‘thermonuclear’ threat in the region. Shocked, you and your team look around the room - but it appears to have deceived you. Minutes pass, and all of your team members look as bored yet intact as usual.","Weary of further lies, you probe the monitor slowly- at first stirring up unhappy SYNTAX ERRORs but eventually managing to open a small journal- timestamped the day of the tragedy. You begin to read.",`03/05:
+    ['Ballistic Early Warning System Tower',34,3,false,["[BALLISTIC EARLY WARNING SYSTEM TOWER]\nIn spite of the darkness of night, it's the tallest thing you’ve ever seen - one of your group claims that as a child he lived in the ruins of massive stone giants miles taller than this one, but he’s well known for his ridiculous tales. The concrete tower juts out of the ground at an angle, and ivy snakes up its walls. Despite its formidable appearance, it is easily entered through one of the many gaping holes in its side.","After ascending the winding spiral staircase for what seems like forever, you and your team of reckless villagers see a source of light emanating from a small room marked ‘WC’. Inside, near the porcelain remains of a sink, lies a small monitor - its screen fractured down the middle yet nevertheless giving out the distinct blue glow that the people of the past seemed to obsess over. You lean down, the only one in the group brave enough to attempt interaction with it - and press one of the many buttons that seem to have been embedded in a square below it. Suddenly, it lights up, claiming in the same writing of the journal claiming the presence of a ‘thermonuclear’ threat in the region. Shocked, you and your team look around the room - but it appears to have deceived you. Minutes pass, and all of your team members look as bored yet intact as usual.","Weary of further lies, you probe the monitor slowly- at first stirring up unhappy SYNTAX ERRORs but eventually managing to open a small journal- timestamped the day of the tragedy. You begin to read.",`03/05:
     Sarah’s been a little under the weather recently, so I took a day off to make her some of my ‘world famous’ chili. BIG MISTAKE. As soon as I got back in, I had to deal with a screaming colonel. We’d been moved to DEFCON-2 over the day off.
     03/06:
     The constant yelling around here is driving me mad. I’ve moved my office to the old water closet (that’s the bathroom for the Americans who have to read this) just to avoid the near constant yelling of the sergeant.  Honestly, I think he’s just as scared as the rest of us, and he just doesn’t know what to do with his fears.
@@ -69,10 +71,13 @@ let poffsetY = -(gh*hd-h)/2;
 //menu variables
 let menuOpen = true;
 let menuWidth = 150;
+let currentMenuWidth = 150;
 
 //notification
 let currentAlert = false;
-let alertFade = 100;
+let alertFade = 200;
+let alertColor = [100,100,100];
+let pAlert = false;
 
 //storybox
 let currentStory = [`After hundreds of years of walking through the ruined earth, passing stories down from generation to generation, the nomadic lifestyle seems like the only way of life. But it is time to settle down - time to heal the earth, bring back the ways of our fathers, to part the fog that obscures the earth and blots the sun. You have been chosen as the leader of a small colony - defend it at all costs.`];
@@ -155,17 +160,27 @@ structures = {
 
 //Technology Tree
 
-researched = ['start'];
+researched = ['Start'];
 
-//[NAME,LEVEL,COST,PREREQUISITES]
-techtree = [
+//[NAME,LEVEL,COST,PREREQUISITES,DESCRIPTION]
+/*techtree = [
     ['start',0,0,'start'],
     ['stuff',1,5,'start'],
     ['basic',1,5,'start'],
     ['moreStuff',2,5,'stuff'],
     ['test',2,5,'basic'],
     ['nuclear',3,10,'test']
-];
+];*/
+techtree = [
+    ['Start',0,0,'Start','This is where it all begins.'],
+    ['Saws',1,20,'Start','Tired of wielding woodpeckers? Try the cutting-edge technology known as saws! Makes Loggers more effective'],
+    ['Traps',1,30,'Start','Save the hunters some effort by placing large tree-trunks on a bunch of thin branches! Doubles hunter productivity'],
+    ['Philosophers',1,40,'Start','"Thinkers" is too archaic. Give them a morality boost by sticking little Philosopher nametags on them! Doubles thinker productivity'],
+    ['Tree-knockers',2,70,'Saws','Who came up with this ridiculous name?!'],
+    ['Scientific Revolution',2,100,'Philosophers',"We've invested in the Scientific Method, and it's providing a good return!"],
+    ['Propaganda',3,100,'Scientific Revolution','Encourage population growth!'],
+    ['Navigation',3,100,'Scientific Revolution','Finally! We can figure out where the heck we are.']
+]
 
 let treeopen = false;
 
@@ -194,6 +209,13 @@ let ghoulImg;
 
 let startImg;
 
+let backgroundMusic;
+
+function preload(){
+    soundFormats('ogg');
+    backgroundMusic=loadSound('sarabande.ogg')//'https://upload.wikimedia.org/wikipedia/commons/5/5c/Grieg_Holberg_Suite_2_Sarabande.ogg');
+}
+
 function setup(){
     t0=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/ocean.png');
     
@@ -218,7 +240,7 @@ function setup(){
     //makegrid();
     makefog();
     scatterghouls();
-    textFont('monospace');
+    textFont('Tahoma');
     noSmooth();
 }
 
@@ -375,6 +397,7 @@ function drawMenu(){
         if(buttonClicked(w-menuWidth-25,h/2-25,25,50)){
             menuOpen = false;
             clearClick = true;
+            currentMenuWidth = 0;
         }
 
         //main rect
@@ -449,6 +472,7 @@ function drawMenu(){
                 rect(w-menuWidth,itemPos-2,menuWidth,20);
                 currentDescription=structures[Object.keys(structures)[item]][1];
                 popupOpen = true;
+                document.body.style.cursor = 'pointer';
             }
             if(item===currentStructure){
                 fill(100,255,100);
@@ -465,9 +489,6 @@ function drawMenu(){
             }
             itemPos += 20;
         }
-        //if(popupOpen===false){
-        //    currentDescription = false;
-        //}
     }
     else{
         fill(50);
@@ -478,12 +499,15 @@ function drawMenu(){
         if(buttonClicked(w-25,h/2-25,25,50)){
             menuOpen = true;
             clearClick = true;
+            currentMenuWidth = menuWidth;
         }
     }
 }
 
 function drawTechtree(){
     if(treeopen){
+        nodePositions = [];
+
         clearClick = true;
         textAlign(LEFT,TOP);
 
@@ -495,40 +519,54 @@ function drawTechtree(){
         textSize(15);
         textAlign(CENTER,CENTER);
         for(let i=0;i<techtree.length;i++){
+            let currentCrowdedness = levelCrowdedness[techtree[i][1]];
+            let yVal=techtree.filter((z)=>{return z[1]==techtree[i][1];});
+            yVal=yVal.sort((a,b)=>a[2]-b[2]).findIndex((x)=>{return techtree[i]==x;})+1;
+            yVal*=20+(h-20-50-20)/(currentCrowdedness+1);
+            nodePositions.push([techtree[i][1]*200+mOffsetX,yVal+mOffsetY]);
+            let pcurrentCrowdedness = levelCrowdedness[techtree[i][1]-1];
+            let pyVal=techtree.filter((z)=>{return z[1]===techtree[i][1]-1;});
+            console.log(pyVal);
+            pyVal=pyVal.sort((a,b)=>a[2]-b[2]).findIndex((x)=>{return techtree[i][3]===x[0];})+1;
+            console.log(pyVal);
+            pyVal*=20+(h-20-50-20)/(pcurrentCrowdedness+1);
+            console.log(pyVal);
+            strokeWeight(5);
+            stroke(255);
+            line(techtree[i][1]*200+mOffsetX+75,yVal+mOffsetY+25,(techtree[i][1]-1)*200+mOffsetX+75,pyVal+mOffsetY+25);
+            noStroke();
+        }
+        for(let i=0;i<techtree.length;i++){
             let owned;
             if(researched.includes(techtree[i][0])){
                 fill(100,255,100);
                 owned = '[Owned]';
             }
             else if(researched.includes(techtree[i][3])){
-                fill(100);
+                fill(227, 255, 105);
                 owned = '[Click to Research]';
             }
             else{
                 fill(70);
                 owned = '[Requires '+techtree[i][3]+']';
             }
-            let currentCrowdedness = levelCrowdedness[techtree[i][1]];
-            let yVal=techtree.filter((z)=>{return z[1]==techtree[i][1];});
-            yVal=yVal.sort((a,b)=>a[2]-b[2]).findIndex((x)=>{return techtree[i]==x;})+1;
-            yVal*=20+(h-20-50-20)/(currentCrowdedness+1);
-            rect(techtree[i][1]*120+mOffsetX,yVal+mOffsetY,100,50);
-            fill(0);
-            text(techtree[i][0],techtree[i][1]*120+mOffsetX+100/2,yVal+mOffsetY+50/2);
 
-            if(buttonHovered(techtree[i][1]*120+mOffsetX,yVal+mOffsetY,100,50)){
+            rect(nodePositions[i][0],nodePositions[i][1],150,50);
+            fill(0);
+            text(techtree[i][0],nodePositions[i][0]+150/2,nodePositions[i][1]+50/2);
+
+            if(buttonHovered(nodePositions[i][0],nodePositions[i][1],150,50)){
                 let structs = 'None';
                 structs = Object.keys(Object.filter(structures,(x)=>{return techtree[i][0]==x[4]})).toString().replace(/[,]/g," \n - ");
                 currentDescription = techtree[i][0]+' \n \nCost: '+techtree[i][2].toString()+' Science \nStructures: \n - '+structs+' \n \n'+owned;
             }
-            if(buttonClicked(techtree[i][1]*120+mOffsetX,yVal+mOffsetY,100,50)){
+            if(buttonClicked(nodePositions[i][0],nodePositions[i][1],150,50)){
                 if(researched.includes(techtree[i][0])==false&&researched.includes(techtree[i][3])){
                     researched.push(techtree[i][0]);
                     resources['Science™']-=techtree[i][2];
                 }
             }
         }
-
         textAlign(LEFT,TOP);
         //title-block
         textSize(30);
@@ -684,6 +722,11 @@ function mousePressed(){
         drag = true;
         prevMouseX = mouseX;
         prevMouseY = mouseY;
+        document.body.style.cursor = 'move';
+    }
+    else if(startScreen){backgroundMusic.loop();}
+    else{
+        document.body.style.cursor = 'crosshair';
     }
 }
 
@@ -695,6 +738,7 @@ function mouseReleased(){
         mpoffsetX = mOffsetX;
         mpoffsetY = mOffsetY;
     }
+    document.body.style.cursor = 'default';
 }
 
 function mouseWheel(){
@@ -810,11 +854,13 @@ function placeObject(){
                             nearUnique();
                         }
                         else{
+                            alertColor=[255,100,100];
                             currentAlert='Not enough resources!';
                         }
                     }
                 }
                 else{
+                    alertColor=[100,100,100];
                     currentAlert="Can't build in unexplored areas!";
                 }
             }
@@ -872,25 +918,30 @@ function resourceManagement(){
 
 function alertManager(){
     if(currentAlert){
-        fill(0,0,0,alertFade);
+        fill(alertColor[0],alertColor[1],alertColor[2],alertFade);
         rect(w/4,0,w/2,50);
         textSize(20);
+        fill(0);
         text(currentAlert,w/4+10,10,w/2-20,50);
-        alertFade-=2;
+        alertFade-=4;
+        if(pAlert!=currentAlert){
+            alertFade = 200;
+        }
+        pAlert = currentAlert;
     }
     if(alertFade<=0){
         currentAlert=false;
-        alertFade = 100;
+        alertFade = 200;
     }
 }
 
 function storyManager(){
     if(currentStory){
         fill(0,0,0,200);
-        rect(40,40,w-80,h-120);
+        rect(40,40,w-80-currentMenuWidth,h-120);
         fill(255);
-        textSize(20);
-        text(storyString,50,50,w-100,h-120);
+        textSize(15);
+        text(storyString,50,50,w-100-currentMenuWidth,h-120);
         if(storyCtr<currentStory[currentPage].split(' ').length){
             storyString += currentStory[currentPage].split(' ')[storyCtr]+' ';
             storyCtr+=1;
@@ -902,7 +953,7 @@ function storyManager(){
             else{
                 fill(100,255,100,150);
             }
-            rect(40,h-60,w-80,50);
+            rect(40,h-60,w-80-currentMenuWidth,50);
             fill(0);
             text("[Please Press this Button]",45,h-50);
             if(buttonClicked(40,h-60,w-80,50)){
@@ -1016,9 +1067,11 @@ function ghoulManager(){
             if(defeated===-1){
                 resources['Wood']+=50;
                 resources['Food']+=20;
+                alertColor=[100,255,100];
                 currentAlert = "You gain 50 Wood from scavenging the ghoul's treasure hoard!";
             }
             else{
+                alertColor=[255,100,100];
                 currentAlert = 'You lose 20 population!';
                 population['Total']-=20;
                 population['Available']-=20;
@@ -1108,6 +1161,9 @@ function draw(){
                 //moveSwitch();
                 if(drag){
                     gridDrag();
+                }
+                if(popupOpen===false&&document.body.style.cursor==='pointer'){
+                    document.body.style.cursor='default';
                 }
                 uniqueManager();
                 descriptionManager();
