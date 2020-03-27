@@ -1,4 +1,4 @@
-//0.6.5: General Improvement
+//0.6.6: Features Are Fully Functional
 
 //canvas dimensions
 let w = window.innerWidth/2;
@@ -38,22 +38,27 @@ ghouls = [];
 
 uniqueobjects = [
     ['Nuclear Killswitch',67,6,false,''],
-    ['Grocery Store',37,27,false,['While the majority of the green lettering on the ancient sign had crumbled, you can still make out the words ‘Half Foods Grocers: food for twice the price”. After busting through the window, your crew explores the rest of the store, staying away from the gaping hole in the ceiling from which small metal fragments periodically tumble.','In one of the few cash registers that avoided rust brought on by the torrential rain, you find a small cloth-bound notebook. The majority of the pages have been hastily torn out or faded by the elements- but you manage to make out some sparse lettering: They’ve finally done it. Those little ***** have dropped them on us. The radio says eighty minutes until all heck breaks loose. I’m going to go find Dan and see if he knows anything else. After that, the ink veers off the page. You shut the book and hide it away, but it remains open in your mind for hours. Who was this person?']],
+    ['Grocery Store',37,27,false,['[GROCERY STORE]\nWhile the majority of the green lettering on the ancient sign had crumbled, you can still make out the words ‘Half Foods Grocers: food for twice the price”. After busting through the window, your crew explores the rest of the store, staying away from the gaping hole in the ceiling from which small metal fragments periodically tumble.','In one of the few cash registers that avoided rust brought on by the torrential rain, you find a small cloth-bound notebook. The majority of the pages have been hastily torn out or faded by the elements- but you manage to make out some sparse lettering: They’ve finally done it. Those little ***** have dropped them on us. The radio says eighty minutes until all heck breaks loose. I’m going to go find Dan and see if he knows anything else. After that, the ink veers off the page. You shut the book and hide it away, but it remains open in your mind for hours. Who was this person?']],
     ['Ballistic Early Warning System Tower',34,3,false,["[BALLISTIC EARLY WARNING SYSTEM TOWER]\nIn spite of the darkness of night, it's the tallest thing you’ve ever seen - one of your group claims that as a child he lived in the ruins of massive stone giants miles taller than this one, but he’s well known for his ridiculous tales. The concrete tower juts out of the ground at an angle, and ivy snakes up its walls. Despite its formidable appearance, it is easily entered through one of the many gaping holes in its side.","After ascending the winding spiral staircase for what seems like forever, you and your team of reckless villagers see a source of light emanating from a small room marked ‘WC’. Inside, near the porcelain remains of a sink, lies a small monitor - its screen fractured down the middle yet nevertheless giving out the distinct blue glow that the people of the past seemed to obsess over. You lean down, the only one in the group brave enough to attempt interaction with it - and press one of the many buttons that seem to have been embedded in a square below it. Suddenly, it lights up, claiming in the same writing of the journal claiming the presence of a ‘thermonuclear’ threat in the region. Shocked, you and your team look around the room - but it appears to have deceived you. Minutes pass, and all of your team members look as bored yet intact as usual.","Weary of further lies, you probe the monitor slowly- at first stirring up unhappy SYNTAX ERRORs but eventually managing to open a small journal- timestamped the day of the tragedy. You begin to read.",`03/05:
-    Sarah’s been a little under the weather recently, so I took a day off to make her some of my ‘world famous’ chili. BIG MISTAKE. As soon as I got back in, I had to deal with a screaming colonel. We’d been moved to DEFCON-2 over the day off.
+    Sarah’s been a little under the weather recently, so I took a day off to make her some of my ‘world famous’ chili. BIG MISTAKE. As soon as I got back in, I had to deal with a screaming colonel. The nation alert level has risen to DEFCON-2 over the day off.
     03/06:
-    The constant yelling around here is driving me mad. I’ve moved my office to the old water closet (that’s the bathroom for the Americans who have to read this) just to avoid the near constant yelling of the sergeant.  Honestly, I think he’s just as scared as the rest of us, and he just doesn’t know what to do with his fears.
+    The constant yelling around here is driving me mad. I’ve moved my office to the old bathroom just to avoid the near constant yelling of the sergeant.  Honestly, I think he’s just as scared as the rest of us, and he just doesn’t know what to do with his fears.
     03/09:
     We’re ENGAGED! She accepted! 
     03/11:
-    I… I don’t even know what to think. The entire country has been moved to DEFCON-1. It’s only a matter of time, now. Sarah’s not picking up her phone. I’m going to find her.
-    03/11 (Supplemental): 
-    It’s happened. I have to save her.
+    I… I don’t even know what to think. The entire country has been moved to DEFCON-1. It’s only a matter of time, now. Sarah’s not picking up her phone. In the case of an emergency, we've agreed to meet at the military base that's east of here...
+    03/12: 
+    It’s happened. I'm going'.
     `]],
-    ['Laboratory',66,6,false,['Something tells you that you are nearly there - perhaps it is just a block away.']],
+    ['Ye Olde Military Base',9,12,false,'[YE OLDE MILITARY BASE]\nThe place itself appears in distress. Many of the doors have been bust open, and papers are scattered haphazardly all over the floor. You pick up one of them. It reads, “This is Dan. The bombs have hit. If anyone’s left after this tragedy, go to my laboratory at (66,6). I’ve been working on some things there…” At this point, the writing turns to an illegible, frantic scrawl. Maybe you should be your thinkers to research navigation...'],
+    ['Laboratory',66,6,false,['[THE LABORATORY]\nSomething tells you that you are nearly there - perhaps it is just a block away.']],
     ['Ancient Advertisement',37,23,false,['“Come buy your FRESH ORGANIC FRUITS at HALF-FOODS GROCERY STORE before disaster strikes! Take Route I-1101 four blocks south.”']],
     ['Street Sign',34,13,false,['A plate of metal painted with words. The letters are faded, but still readable: “TOTALLY NOT SUSPICIOUS MILITARY TOWER IN 10 BLOCKS. GO NORTH.”']],
     ['Street Sign',37,17,false,['A green street sign lies half-buried in the ground. Its faded lettering reads: HALF-FOODS GROCERY STORE in 10 BLOCKS SOUTH.']]
+    ['Road Sign',19,12,false,['Ye Olde Military Base 10 Blocks East']],
+    ['Army Recruitment Poster',16,16,false,['Uncle Same wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).']],
+    ['Army Recruitment Poster',26,4,false,['Uncle Same wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).']],
+    ['Army Recruitment Poster',21,6,false,['Uncle Same wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).']],
 ]
 
 
@@ -128,6 +133,7 @@ Activating Nuclear Killswitch...`;
 let endCtr = 0;
 let endString = '';
 let end_triggered = false;
+let endCircleRadius = 1.1;
 
 population = {
     'Total':100,
@@ -142,13 +148,16 @@ resources = {
 }
 
 //Structures
-//[NAME,COLOR,DESCRIPTION,WOODCOST,TECHREQUIRED]
+//NAME:[DESCRIPTION,INITCOSTS,CONTINOUSCOSTS,PRODUCTS]
+//INITCOSTS: [POPULATION,WOOD]
+//CONTINUOUSCOSTS: [FOOD,WOOD]
+//PRODUCTS: [POPULATION,FOOD,WOOD,SCIENCE]
 
 structures = {
-    'basic_hut':[[255,100,100],'A basic hut, for all your basic hut needs! \n \nProduces: 1 Population/day \n \nCost: 10 Wood, 20 Available Population, consumes food continously \n',10,'start'],
-    'hunter':[[100,255,100],'A way to keep your people from starving to death! \n \nProduces: 3 Food/day \nCost: 20 Wood, 20 Available Population, consumes wood continously \n',10,'start'],
-    'logger':[[255,150,100],'Employs a squadron of woodpeckers to contribute to climate change \n \nProduces: 3 Wood/day \nCost: 20 Wood, 20 Available Population, consumes food continously \n',20,'start'],
-    'thinker':[[100,100,255],'They think, I think. Therefore they are and I am. Or something. \n \nProduces: 0.25 Science/day \n \nCost: 20 Available Population',0,'start']
+    'basic_hut':['A basic hut, for all your basic hut needs!',[3,10],[2,0],[1,0,0,0]],
+    'hunter':['A way to keep your people from starving to death!',[10,20],[0,2],[0,2,0,0]],
+    'logger':['Employs a squadron of woodpeckers to contribute to climate change',[10,2],[5,0],[0,0,3,0]],
+    'thinker':['They think, I think. Therefore they are and I am. Or something.',[20,0],[2,0],[0,0,0,1]]
 }
 
 /*structures = [
@@ -182,6 +191,8 @@ techtree = [
     ['Navigation',3,100,'Scientific Revolution','Finally! We can figure out where the heck we are.']
 ]
 
+let navigation_unlocked = false;
+
 let treeopen = false;
 
 let mOffsetX = 20;
@@ -214,6 +225,7 @@ let backgroundMusic;
 function preload(){
     soundFormats('ogg');
     backgroundMusic=loadSound('sarabande.ogg')//'https://upload.wikimedia.org/wikipedia/commons/5/5c/Grieg_Holberg_Suite_2_Sarabande.ogg');
+    backgroundMusic.setVolume(0.05);
 }
 
 function setup(){
@@ -279,7 +291,6 @@ function makefog(){
         }
         fogs.push(k);
     }
-    console.log(fogs);
 }
 
 function scatterghouls(){
@@ -333,7 +344,7 @@ function drawStart(){
     text('Clearing the Skies',70,h/2-90/2);
     
     textSize(10);
-    text('v.0.6.0',70,h/2-90/2+30);
+    text('v.0.6.6',70,h/2-90/2+30);
     
     textSize(20);
     if(buttonHovered(70,h/2-90/2+60,w-140,50)){
@@ -466,11 +477,20 @@ function drawMenu(){
         //popup descriptions
         popupOpen = false;
 
-        for(var item=0;item<Object.keys(structures).length;item++){
+        for(let item=0;item<Object.keys(structures).length;item++){
             if(buttonHovered(w-menuWidth+20,itemPos,menuWidth-20,20)){
                 fill(50);
                 rect(w-menuWidth,itemPos-2,menuWidth,20);
-                currentDescription=structures[Object.keys(structures)[item]][1];
+                let objProduction;
+                for(let i=1; i<Object.keys(resources).length+1; i++){
+                    if(structures[Object.keys(structures)[item]][3][i]>0){
+                        objProduction=[Object.keys(resources)[i-1],structures[Object.keys(structures)[item]][3][i]];
+                    }
+                }
+                if(structures[Object.keys(structures)[item]][3][0]>0){
+                    objProduction=['Population',structures[Object.keys(structures)[item]][3][0]];
+                }
+                currentDescription=`${structures[Object.keys(structures)[item]][0]}\n\nProduces ${objProduction[1]} ${objProduction[0]} / day\nInitial Cost: \n- Population:${structures[Object.keys(structures)[item]][1][0]} \n- Wood:${structures[Object.keys(structures)[item]][1][1]} \nConsumes Continously: \n- Food:${structures[Object.keys(structures)[item]][2][0]} \n- Wood: ${structures[Object.keys(structures)[item]][2][1]}`;
                 popupOpen = true;
                 document.body.style.cursor = 'pointer';
             }
@@ -526,11 +546,8 @@ function drawTechtree(){
             nodePositions.push([techtree[i][1]*200+mOffsetX,yVal+mOffsetY]);
             let pcurrentCrowdedness = levelCrowdedness[techtree[i][1]-1];
             let pyVal=techtree.filter((z)=>{return z[1]===techtree[i][1]-1;});
-            console.log(pyVal);
             pyVal=pyVal.sort((a,b)=>a[2]-b[2]).findIndex((x)=>{return techtree[i][3]===x[0];})+1;
-            console.log(pyVal);
             pyVal*=20+(h-20-50-20)/(pcurrentCrowdedness+1);
-            console.log(pyVal);
             strokeWeight(5);
             stroke(255);
             line(techtree[i][1]*200+mOffsetX+75,yVal+mOffsetY+25,(techtree[i][1]-1)*200+mOffsetX+75,pyVal+mOffsetY+25);
@@ -558,12 +575,37 @@ function drawTechtree(){
             if(buttonHovered(nodePositions[i][0],nodePositions[i][1],150,50)){
                 let structs = 'None';
                 structs = Object.keys(Object.filter(structures,(x)=>{return techtree[i][0]==x[4]})).toString().replace(/[,]/g," \n - ");
-                currentDescription = techtree[i][0]+' \n \nCost: '+techtree[i][2].toString()+' Science \nStructures: \n - '+structs+' \n \n'+owned;
+                currentDescription = `${techtree[i][0]}\n \nCost: ${techtree[i][2]} Science™\n \n${techtree[i][4]}\n \n${owned}`;
+                //currentDescription = techtree[i][0]+' \n \nCost: '+techtree[i][2].toString()+' Science \nStructures: \n - '+structs+' \n \n'+owned;
             }
             if(buttonClicked(nodePositions[i][0],nodePositions[i][1],150,50)){
-                if(researched.includes(techtree[i][0])==false&&researched.includes(techtree[i][3])){
+                if(researched.includes(techtree[i][0])==false&&researched.includes(techtree[i][3])&&resources['Science™']>=techtree[i][2]){
                     researched.push(techtree[i][0]);
                     resources['Science™']-=techtree[i][2];
+                    switch(techtree[i][0]){
+                        //[DESCRIPTION,INITCOSTS,CONTINOUSCOSTS,PRODUCTS]
+                        case 'Saws':
+                            structures['logger'][3][2]*=2;
+                            break;
+                        case 'Traps':
+                            structures['hunter'][3][1]*=2;
+                            break;
+                        case 'Philosophers':
+                            structures['thinker'][3][3]*=2;
+                            break;
+                        case 'Tree-knockers':
+                            structures['logger'][3][2]*=2;
+                            break;
+                        case 'Scientific Revoluton':
+                            structures['thinker'][3][3]*=3;
+                            break;
+                        case 'Propaganda':
+                            structures['basic-hut'][3][0]*=2;
+                            break;
+                        case 'Navigation':
+                            navigation_unlocked = true;
+                            break;
+                    }
                 }
             }
         }
@@ -655,6 +697,7 @@ function clearfog(x,y){
 
 function drawbackground(){
     background(0);
+    tint(255);
     for(let i=0;i<=w/wd+2;i++){
         for(let j=0;j<=h/hd+2;j++){
             image(t0,(i-1)*wd+offsetX%wd,(j-1)*hd+offsetY%hd,wd,hd);
@@ -699,6 +742,10 @@ function drawCursor(){
                     fill(100,100);
                 }
                 rect(i*wd+offsetX,j*hd+offsetY+hd-wd,wd,wd);
+                if(navigation_unlocked){
+                    fill(255);
+                    text(`(${i},${j})`,i*wd+offsetX+5,j*hd+offsetY+hd-wd+5);
+                }
             }
         }
     }
@@ -836,13 +883,13 @@ function isInFog(i,j){
     return false;
 }
 
-function placeObject(){
+/*function placeObject(){
     for(let i=0;i<gw;i++){
         for(let j=0;j<gh;j++){
             if(mouseX>i*wd+offsetX&&mouseX<i*wd+wd+offsetX&&mouseY>j*hd+offsetY&&mouseY<j*hd+hd+offsetY){
                 if(isInFog(i,j)===false){
                     if(objectExists(i,j)===false){
-                        if(resources['Wood']>=structures[selectedStructure][2]*difficulty && population['Available']>10){
+                        if(resources['Wood']>=structures[selectedStructure][2]*difficulty && population['Available']>=10){
                             objects.push({'type':selectedStructure,'x':i,'y':j});
                             resources['Wood']-=structures[selectedStructure][2]*difficulty;
                             //population['Working']-=20;
@@ -866,11 +913,50 @@ function placeObject(){
             }
         }
     }
+}*/
+function areThereEnoughResourcesToBuild(){
+    if(population['Available']<=structures[selectedStructure][2][0]){
+        return false;
+    }
+    if(resources['Wood']<=structures[selectedStructure][2][i]){
+        return false;
+    }
+    return true;
+}
+
+function placeObject(){
+    for(let i=0;i<gw;i++){
+        for(let j=0;j<gh;j++){
+            if(mouseX>i*wd+offsetX&&mouseX<i*wd+wd+offsetX&&mouseY>j*hd+offsetY&&mouseY<j*hd+hd+offsetY){
+                if(isInFog(i,j)===false){
+                    if(objectExists(i,j)===false){
+                        if(areThereEnoughResourcesToBuild){
+                            objects.push({'type':selectedStructure,'x':i,'y':j});
+                            resources['Wood']-=structures[selectedStructure][2][1];
+                            population['Available']-=structures[selectedStructure][2][0];
+                            population['Working']+=structures[selectedStructure][2][0];
+                            clearfog(i,j);
+                            nearGhoul();
+                            nearUnique();
+                        }
+                        else{
+                            alertColor=[255,100,100];
+                            currentAlert='Not enough resources!';
+                        }
+                    }
+                }
+                else{
+                    alertColor=[100,100,100];
+                    currentAlert="Can't build in unexplored areas!";
+                }
+            }
+        }
+    }
 }
 
 /* Managers */
 
-function resourceManagement(){
+/*function resourceManagement(){
     if(currentStory===false){
         for(let i=0;i<objects.length;i++){
             switch(objects[i]['type']){
@@ -914,13 +1000,57 @@ function resourceManagement(){
             }
         }
     }
+}*/
+function areThereEnoughResourcesToProduce(s){
+    let caution = true;
+    for(let i=0;i<2;i++){
+        //[DESCRIPTION,INITCOSTS,CONTINOUSCOSTS,PRODUCTS]
+        if([resources['Food'],resources['Wood']][i]<s[2][i]){
+            console.log('Warning');
+            return false;
+        }
+        else if([resources['Food'],resources['Wood']][i]-20<s[2][i]){
+            caution = ['food','wood'][i];
+        }
+        return caution;
+    }
+}
+
+function resourceManagement(){
+    if(currentStory===false){
+        for(let i=0;i<objects.length;i++){
+            structure=structures[objects[i]['type']];
+            if(areThereEnoughResourcesToProduce(structure)){
+                if(areThereEnoughResourcesToProduce(structure)!=true){
+                    alertColor = [255,255,100];
+                    currentAlert = 'Critically Low Levels of '+areThereEnoughResourcesToProduce(structure);
+                }
+                //Production
+                production_list = structure[3];
+                population['Available']+=production_list[0];
+                population['Total']+=production_list[0];
+                for(let j=1;j<production_list.length;j++){
+                    resources[Object.keys(resources)[j-1]]+=production_list[j];
+                }
+                //Reduction
+                reduction_list = structure[2];
+                for(let j=0;j<reduction_list.length;j++){
+                    resources[Object.keys(resources)[j]]-=reduction_list[j];
+                }
+            }
+            else{
+                alertColor = [255,100,100];
+                currentAlert = objects[i]['type']+' has run out of resources!';
+            }
+        }
+    }
 }
 
 function alertManager(){
     if(currentAlert){
         fill(alertColor[0],alertColor[1],alertColor[2],alertFade);
         rect(w/4,0,w/2,50);
-        textSize(20);
+        textSize(15);
         fill(0);
         text(currentAlert,w/4+10,10,w/2-20,50);
         alertFade-=4;
@@ -975,16 +1105,28 @@ function storyManager(){
 function endManager(){
     if(end_triggered){
         fill(0,0,0,200);
-        background(0,0,0);
-        fill(255);
-        textSize(12);
-        text(endString,50,50,w-100,h-120);
+        if(endCircleRadius<w&&endCircleRadius<h){
+            background(0,0,0);
+            fill(255);
+            textSize(12);
+            text(endString,50,50,w-100,h-120);
+        }
         if(endCtr<endText.length){
             endString += endText[endCtr];
             endCtr+=1;
         }
         else{
-            console.log('Ending Sequences Ended');
+            endCircleRadius*=1+endCircleRadius/100;
+            fill(255);
+            circle(w*3/4,h*3/4,endCircleRadius);
+        }
+        if(endCircleRadius>w&&endCircleRadius>h){
+            document.body.style.backgroundColor = 'white';
+            document.body.style.color = 'white';
+            circle(w*3/4,h*3/4,endCircleRadius);
+            for(let el of document.getElementsByClassName('normal-button')){
+                el.style.visibility = 'hidden';
+            }
         }
     }
 }
@@ -996,13 +1138,14 @@ function descriptionManager(){
         fill(255, 213, 74,200);
         let desSeg = '';
         let bl = 0;
-        for(let ch = 0; ch<=currentDescription.split(' ').length; ch++){
+        for(let ch = 0; ch<currentDescription.split(' ').length; ch++){
           if(textWidth(desSeg)>=180){
             bl+=1;
             desSeg = currentDescription.split(' ')[ch-1]+' ';
           }
           //console.log(desSeg);
-          if(currentDescription.split(' ')[ch]==='\n'){
+          //console.log(currentDescription.split(' ')[ch]);
+          if(currentDescription.split(' ')[ch].indexOf('\n')!=-1){
               bl+=1;
           }
           desSeg+=currentDescription.split(' ')[ch]+' ';
@@ -1010,7 +1153,7 @@ function descriptionManager(){
         }
         bl+=1;
         //let bl = Math.ceil(bw/200)+1;
-        let bh = bl*textSize()/0.75;
+        let bh = bl*15/0.75;
         let dx = mouseX;
         let dy = mouseY;
         if(w-mouseX<200){
@@ -1028,9 +1171,9 @@ function descriptionManager(){
 function ghoulManager(){
     if(currentGhoul&&chosenWeapon){
         fill(30,230);
-        rect(40,20,w-80,h*3/4);
+        rect(40,20,w-80-currentMenuWidth,h*3/4);
         fill(255);
-        textSize(20);
+        textSize(15);
         text('You chose '+ghoulWeapons[chosenWeapon-1],60,30,w-100,h);
         
         if(defeated===0){
@@ -1059,7 +1202,7 @@ function ghoulManager(){
         else{
             fill(100,255,100,150);
         }
-        rect(40,h-60,w-80,50);
+        rect(40,h-60,w-80-currentMenuWidth,50);
         fill(0);
 
         text("[Please Press this Button]",45,h-50);
@@ -1085,11 +1228,11 @@ function ghoulManager(){
     }
     if(currentGhoul&&chosenWeapon===false){
         fill(30,230);
-        rect(40,20,w-80,h*3/4);
+        rect(40,20,w-80-currentMenuWidth,h*3/4);
         fill(255);
-        textSize(20);
-        text('A Ghoul is near! What weapon will you use?',60,30,w-100,h);
-        let choiceboxwidth = (w-160)/3;
+        textSize(15);
+        text('A Ghoul is near! What weapon will you use?',60,30,w-120-currentMenuWidth,h);
+        let choiceboxwidth = (w-currentMenuWidth-160)/3;
         for(let i=0;i<ghoulWeapons.length;i++){
             if(buttonHovered(60+i*(choiceboxwidth+20),60,choiceboxwidth,h*3/4-100)){
                 fill(27, 222, 222);
@@ -1111,10 +1254,10 @@ function ghoulManager(){
 
 function uniqueManager(){
     for(let i=0;i<uniqueobjects.length;i++){
-        if(buttonHovered(uniqueobjects[i][1]*wd+5+offsetX,uniqueobjects[i][2]*hd+5+offsetY+hd-wd,wd-10,wd-10)){
+        if(buttonHovered(uniqueobjects[i][1]*wd+5+offsetX,uniqueobjects[i][2]*hd+5+offsetY+hd-wd,wd-10,wd-10)&&isInFog(uniqueobjects[i][1],uniqueobjects[i][2])===false){
             currentDescription=uniqueobjects[i][0]+' \n[Click to read]';
         }
-        if(buttonClicked(uniqueobjects[i][1]*wd+5+offsetX,uniqueobjects[i][2]*hd+5+offsetY+hd-wd,wd-10,wd-10)){
+        if(buttonClicked(uniqueobjects[i][1]*wd+5+offsetX,uniqueobjects[i][2]*hd+5+offsetY+hd-wd,wd-10,wd-10)&&isInFog(uniqueobjects[i][1],uniqueobjects[i][2])===false){
             currentStory=false;
             storyCtr = 0;
             storyString = '';
@@ -1128,8 +1271,6 @@ function uniqueManager(){
 
 setInterval(resourceManagement,2000);
 setInterval(nearGhoul,2000);
-
-// v~~ : Terrain Test
 
 function draw(){
     currentDescription = false;
@@ -1153,8 +1294,8 @@ function draw(){
                 drawbackground();
                 drawgrid();
                 drawUniques();
-                drawfog();
                 drawGhouls();
+                drawfog();
                 drawObjects();
                 drawCursor();
                 drawMenu();
