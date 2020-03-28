@@ -1,4 +1,4 @@
-//0.6.6: Features Are Fully Functional
+//0.6.6.1: Yet Another Bugfix
 
 //canvas dimensions
 let w = window.innerWidth/2;
@@ -50,11 +50,11 @@ uniqueobjects = [
     03/12: 
     It’s happened. I'm going'.
     `]],
-    ['Ye Olde Military Base',9,12,false,'[YE OLDE MILITARY BASE]\nThe place itself appears in distress. Many of the doors have been bust open, and papers are scattered haphazardly all over the floor. You pick up one of them. It reads, “This is Dan. The bombs have hit. If anyone’s left after this tragedy, go to my laboratory at (66,6). I’ve been working on some things there…” At this point, the writing turns to an illegible, frantic scrawl. Maybe you should be your thinkers to research navigation...'],
+    ['Ye Olde Military Base',9,12,false,['[YE OLDE MILITARY BASE]\nThe place itself appears in distress. Many of the doors have been bust open, and papers are scattered haphazardly all over the floor. You pick up one of them.','It reads, “This is Dan. The bombs have hit. If anyone’s left after this tragedy, go to my laboratory at (66,6). I’ve been working on some things there…” At this point, the writing turns to an illegible, frantic scrawl.']],
     ['Laboratory',66,6,false,['[THE LABORATORY]\nSomething tells you that you are nearly there - perhaps it is just a block away.']],
     ['Ancient Advertisement',37,23,false,['“Come buy your FRESH ORGANIC FRUITS at HALF-FOODS GROCERY STORE before disaster strikes! Take Route I-1101 four blocks south.”']],
     ['Street Sign',34,13,false,['A plate of metal painted with words. The letters are faded, but still readable: “TOTALLY NOT SUSPICIOUS MILITARY TOWER IN 10 BLOCKS. GO NORTH.”']],
-    ['Street Sign',37,17,false,['A green street sign lies half-buried in the ground. Its faded lettering reads: HALF-FOODS GROCERY STORE in 10 BLOCKS SOUTH.']]
+    ['Street Sign',37,17,false,['A green street sign lies half-buried in the ground. Its faded lettering reads: HALF-FOODS GROCERY STORE in 10 BLOCKS SOUTH.']],
     ['Road Sign',19,12,false,['Ye Olde Military Base 10 Blocks East']],
     ['Army Recruitment Poster',16,16,false,['Uncle Same wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).']],
     ['Army Recruitment Poster',26,4,false,['Uncle Same wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).']],
@@ -155,8 +155,8 @@ resources = {
 
 structures = {
     'basic_hut':['A basic hut, for all your basic hut needs!',[3,10],[2,0],[1,0,0,0]],
-    'hunter':['A way to keep your people from starving to death!',[10,20],[0,2],[0,2,0,0]],
-    'logger':['Employs a squadron of woodpeckers to contribute to climate change',[10,2],[5,0],[0,0,3,0]],
+    'hunter':['A way to keep your people from starving to death!',[10,20],[0,1],[0,2,0,0]],
+    'logger':['Employs a squadron of woodpeckers to contribute to climate change',[10,2],[2,0],[0,0,3,0]],
     'thinker':['They think, I think. Therefore they are and I am. Or something.',[20,0],[2,0],[0,0,0,1]]
 }
 
@@ -344,7 +344,7 @@ function drawStart(){
     text('Clearing the Skies',70,h/2-90/2);
     
     textSize(10);
-    text('v.0.6.6',70,h/2-90/2+30);
+    text('v.0.6.0',70,h/2-90/2+30);
     
     textSize(20);
     if(buttonHovered(70,h/2-90/2+60,w-140,50)){
@@ -361,6 +361,7 @@ function drawStart(){
         clearClick = true;
         objects.push({'type':'basic_hut','x':Math.round(gw/2),'y':Math.round(gh/2)});
         clearfog(Math.round(gw/2),Math.round(gh/2));
+        backgroundMusic.loop();
     }
 }
 
@@ -600,7 +601,7 @@ function drawTechtree(){
                             structures['thinker'][3][3]*=3;
                             break;
                         case 'Propaganda':
-                            structures['basic-hut'][3][0]*=2;
+                            structures['basic_hut'][3][0]*=2;
                             break;
                         case 'Navigation':
                             navigation_unlocked = true;
@@ -651,6 +652,7 @@ function gridDrag(){
 }
 
 function drawObjects(){
+    tint(255,255);
     for(let i=0;i<objects.length;i++){
         //fill(structures[objects[i]['type']][0]);
         //rect(objects[i]['x']*wd+5+offsetX,objects[i]['y']*hd+5+offsetY,wd-10,hd-10);
@@ -771,7 +773,7 @@ function mousePressed(){
         prevMouseY = mouseY;
         document.body.style.cursor = 'move';
     }
-    else if(startScreen){backgroundMusic.loop();}
+    //else if(startScreen){backgroundMusic.loop();}
     else{
         document.body.style.cursor = 'crosshair';
     }
@@ -915,10 +917,10 @@ function isInFog(i,j){
     }
 }*/
 function areThereEnoughResourcesToBuild(){
-    if(population['Available']<=structures[selectedStructure][2][0]){
+    if(population['Available']<=structures[selectedStructure][1][0]){
         return false;
     }
-    if(resources['Wood']<=structures[selectedStructure][2][i]){
+    if(resources['Wood']<=structures[selectedStructure][1][1]){
         return false;
     }
     return true;
@@ -930,11 +932,11 @@ function placeObject(){
             if(mouseX>i*wd+offsetX&&mouseX<i*wd+wd+offsetX&&mouseY>j*hd+offsetY&&mouseY<j*hd+hd+offsetY){
                 if(isInFog(i,j)===false){
                     if(objectExists(i,j)===false){
-                        if(areThereEnoughResourcesToBuild){
+                        if(areThereEnoughResourcesToBuild()){
                             objects.push({'type':selectedStructure,'x':i,'y':j});
-                            resources['Wood']-=structures[selectedStructure][2][1];
-                            population['Available']-=structures[selectedStructure][2][0];
-                            population['Working']+=structures[selectedStructure][2][0];
+                            resources['Wood']-=structures[selectedStructure][1][1];
+                            population['Available']-=structures[selectedStructure][1][0];
+                            population['Working']+=structures[selectedStructure][1][0];
                             clearfog(i,j);
                             nearGhoul();
                             nearUnique();
@@ -1009,11 +1011,11 @@ function areThereEnoughResourcesToProduce(s){
             console.log('Warning');
             return false;
         }
-        else if([resources['Food'],resources['Wood']][i]-20<s[2][i]){
+        else if([resources['Food'],resources['Wood']][i]<20){
             caution = ['food','wood'][i];
         }
-        return caution;
     }
+    return caution;
 }
 
 function resourceManagement(){
@@ -1271,6 +1273,8 @@ function uniqueManager(){
 
 setInterval(resourceManagement,2000);
 setInterval(nearGhoul,2000);
+
+// v~~ : Terrain Test
 
 function draw(){
     currentDescription = false;
