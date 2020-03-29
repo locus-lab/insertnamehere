@@ -1,4 +1,4 @@
-//0.6.6.1: Yet Another Bugfix
+//0.6.6: Complete Functionality
 
 //canvas dimensions
 let w = window.innerWidth/2;
@@ -37,6 +37,7 @@ ghouls = [];
 ];*/
 
 uniqueobjects = [
+    //['Nuclear Killswitch',34,15,false,''],
     ['Nuclear Killswitch',67,6,false,''],
     ['Grocery Store',37,27,false,['[GROCERY STORE]\nWhile the majority of the green lettering on the ancient sign had crumbled, you can still make out the words ‘Half Foods Grocers: food for twice the price”. After busting through the window, your crew explores the rest of the store, staying away from the gaping hole in the ceiling from which small metal fragments periodically tumble.','In one of the few cash registers that avoided rust brought on by the torrential rain, you find a small cloth-bound notebook. The majority of the pages have been hastily torn out or faded by the elements- but you manage to make out some sparse lettering: They’ve finally done it. Those little ***** have dropped them on us. The radio says eighty minutes until all heck breaks loose. I’m going to go find Dan and see if he knows anything else. After that, the ink veers off the page. You shut the book and hide it away, but it remains open in your mind for hours. Who was this person?']],
     ['Ballistic Early Warning System Tower',34,3,false,["[BALLISTIC EARLY WARNING SYSTEM TOWER]\nIn spite of the darkness of night, it's the tallest thing you’ve ever seen - one of your group claims that as a child he lived in the ruins of massive stone giants miles taller than this one, but he’s well known for his ridiculous tales. The concrete tower juts out of the ground at an angle, and ivy snakes up its walls. Despite its formidable appearance, it is easily entered through one of the many gaping holes in its side.","After ascending the winding spiral staircase for what seems like forever, you and your team of reckless villagers see a source of light emanating from a small room marked ‘WC’. Inside, near the porcelain remains of a sink, lies a small monitor - its screen fractured down the middle yet nevertheless giving out the distinct blue glow that the people of the past seemed to obsess over. You lean down, the only one in the group brave enough to attempt interaction with it - and press one of the many buttons that seem to have been embedded in a square below it. Suddenly, it lights up, claiming in the same writing of the journal claiming the presence of a ‘thermonuclear’ threat in the region. Shocked, you and your team look around the room - but it appears to have deceived you. Minutes pass, and all of your team members look as bored yet intact as usual.","Weary of further lies, you probe the monitor slowly- at first stirring up unhappy SYNTAX ERRORs but eventually managing to open a small journal- timestamped the day of the tragedy. You begin to read.",`03/05:
@@ -48,7 +49,7 @@ uniqueobjects = [
     03/11:
     I… I don’t even know what to think. The entire country has been moved to DEFCON-1. It’s only a matter of time, now. Sarah’s not picking up her phone. In the case of an emergency, we've agreed to meet at the military base that's east of here...
     03/12: 
-    It’s happened. I'm going'.
+    It’s happened. I'm going.
     `]],
     ['Ye Olde Military Base',9,12,false,['[YE OLDE MILITARY BASE]\nThe place itself appears in distress. Many of the doors have been bust open, and papers are scattered haphazardly all over the floor. You pick up one of them.','It reads, “This is Dan. The bombs have hit. If anyone’s left after this tragedy, go to my laboratory at (66,6). I’ve been working on some things there…” At this point, the writing turns to an illegible, frantic scrawl.']],
     ['Laboratory',66,6,false,['[THE LABORATORY]\nSomething tells you that you are nearly there - perhaps it is just a block away.']],
@@ -134,6 +135,19 @@ let endCtr = 0;
 let endString = '';
 let end_triggered = false;
 let endCircleRadius = 1.1;
+
+credits = [
+    '𝘾 𝙇 𝙀 𝘼 𝙍 𝙄 𝙉 𝙂   𝙏 𝙃 𝙀   𝙎 𝙆 𝙄 𝙀 𝙎',
+    'Created by Jieruei Chang and Nathan Myers',
+    'Built with p5.js',
+    "Background music: Sarabande from the Holburg Suite by Edvard Grieg",
+    "Recording from Wikimedia Commons",
+    "Inspired by Sid Meier's Civilization"
+];
+let creditCtr = [];
+for(let i=0;i<credits.length;i++){
+    creditCtr.push(i*-50);
+}
 
 population = {
     'Total':100,
@@ -426,7 +440,7 @@ function drawMenu(){
         let itemPos = 50;
 
         for(var key in population){
-            text(key+': '+population[key].toString(),w-menuWidth+20,itemPos);
+            text(key+': '+round(population[key].toString()),w-menuWidth+20,itemPos);
             if(buttonHovered(w-menuWidth+20,itemPos,menuWidth-20,20)){
                 currentDescription = key+' Population';
             }
@@ -444,7 +458,7 @@ function drawMenu(){
         itemPos = 150;
 
         for(var key in resources){
-            text(key+': '+resources[key].toString(),w-menuWidth+20,itemPos);
+            text(key+': '+round(resources[key]).toString(),w-menuWidth+20,itemPos);
             if(buttonHovered(w-menuWidth+20,itemPos,menuWidth-20,20)){
                 currentDescription = key;
             }
@@ -1029,15 +1043,15 @@ function resourceManagement(){
                 }
                 //Production
                 production_list = structure[3];
-                population['Available']+=production_list[0];
-                population['Total']+=production_list[0];
+                population['Available']+=production_list[0]/10;
+                population['Total']+=production_list[0]/10;
                 for(let j=1;j<production_list.length;j++){
-                    resources[Object.keys(resources)[j-1]]+=production_list[j];
+                    resources[Object.keys(resources)[j-1]]+=production_list[j]/10;
                 }
                 //Reduction
                 reduction_list = structure[2];
                 for(let j=0;j<reduction_list.length;j++){
-                    resources[Object.keys(resources)[j]]-=reduction_list[j];
+                    resources[Object.keys(resources)[j]]-=reduction_list[j]/10;
                 }
             }
             else{
@@ -1129,7 +1143,20 @@ function endManager(){
             for(let el of document.getElementsByClassName('normal-button')){
                 el.style.visibility = 'hidden';
             }
+            creditsManager();
         }
+    }
+}
+
+function creditsManager(){
+    background(255);
+    textSize(20);
+    for(let i=0;i<credits.length;i++){
+        fill(0,creditCtr[i]);
+        text(credits[i],20,40*i);
+    }
+    for(let i=0;i<creditCtr.length;i++){
+        creditCtr[i]+=1;
     }
 }
 
@@ -1216,10 +1243,17 @@ function ghoulManager(){
                 currentAlert = "You gain 50 Wood from scavenging the ghoul's treasure hoard!";
             }
             else{
+                if(population['Available']>=20){
+                    population['Total']-=20;
+                    population['Available']-=20;
+                    currentAlert = 'You lose 20 population!';
+                }
+                else{
+                    population['Total']-=population['Available'];
+                    currentAlert = `You lose ${population['Available']} population!`;
+                    population['Available']=0;
+                }
                 alertColor=[255,100,100];
-                currentAlert = 'You lose 20 population!';
-                population['Total']-=20;
-                population['Available']-=20;
             }
             currentGhoul=false;
             chosenWeapon=false;
@@ -1271,7 +1305,7 @@ function uniqueManager(){
     }
 }
 
-setInterval(resourceManagement,2000);
+setInterval(resourceManagement,200);
 setInterval(nearGhoul,2000);
 
 // v~~ : Terrain Test
