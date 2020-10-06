@@ -38,7 +38,7 @@ ghouls = [];
 
 uniqueobjects = [
     //['Nuclear Killswitch',34,15,false,''],
-    ['Nuclear Killswitch',67,6,false,'killswitch.png'],
+    ['Nuclear Killswitch',67,6,false,'','killswitch.png'],
     ['Grocery Store',37,27,false,['[GROCERY STORE]\nWhile the majority of the green lettering on the ancient sign had crumbled, you can still make out the words ‘Half Foods Grocers: food for twice the price”. After busting through the window, your crew explores the rest of the store, staying away from the gaping hole in the ceiling from which small metal fragments periodically tumble.','In one of the few cash registers that avoided rust brought on by the torrential rain, you find a small cloth-bound notebook. The majority of the pages have been hastily torn out or faded by the elements- but you manage to make out some sparse lettering: They’ve finally done it. Those little ***** have dropped them on us. The radio says eighty minutes until all heck breaks loose. I’m going to go find Dan and see if he knows anything else. After that, the ink veers off the page. You shut the book and hide it away, but it remains open in your mind for hours. Who was this person?'],'grocery.png'],
     ['Ballistic Early Warning System Tower',34,3,false,["[BALLISTIC EARLY WARNING SYSTEM TOWER]\nIn spite of the darkness of night, it's the tallest thing you’ve ever seen - one of your group claims that as a child he lived in the ruins of massive stone giants miles taller than this one, but he’s well known for his ridiculous tales. The concrete tower juts out of the ground at an angle, and ivy snakes up its walls. Despite its formidable appearance, it is easily entered through one of the many gaping holes in its side.","After ascending the winding spiral staircase for what seems like forever, you and your team of reckless villagers see a source of light emanating from a small room marked ‘WC’. Inside, near the porcelain remains of a sink, lies a small monitor - its screen fractured down the middle yet nevertheless giving out the distinct blue glow that the people of the past seemed to obsess over. You lean down, the only one in the group brave enough to attempt interaction with it - and press one of the many buttons that seem to have been embedded in a square below it. Suddenly, it lights up, claiming in the same writing of the journal claiming the presence of a ‘thermonuclear’ threat in the region. Shocked, you and your team look around the room - but it appears to have deceived you. Minutes pass, and all of your team members look as bored yet intact as usual.","Weary of further lies, you probe the monitor slowly- at first stirring up unhappy SYNTAX ERRORs but eventually managing to open a small journal- timestamped the day of the tragedy. You begin to read.",`03/05:
     Sarah’s been a little under the weather recently, so I took a day off to make her some of my ‘world famous’ chili. BIG MISTAKE. As soon as I got back in, I had to deal with a screaming colonel. The nation alert level has risen to DEFCON-2 over the day off.
@@ -684,7 +684,7 @@ function drawUniques(){
         //fill(255,255,100);
         //rect(objects[i]['x']*wd+5+offsetX,objects[i]['y']*hd+5+offsetY,wd-10,hd-10);
         //rect(uniqueobjects[i][1]*wd+5+offsetX,uniqueobjects[i][2]*hd+5+offsetY+hd-wd,wd-10,wd-10);
-        image(uniqueobjects[i][4],uniqueobjects[i][1]*wd+5+offsetX,uniqueobjects[i][2]*hd+5+offsetY+hd-wd,wd-10,wd-10);
+        image(uniqueobjects[i][5],uniqueobjects[i][1]*wd+5+offsetX,uniqueobjects[i][2]*hd+5+offsetY+hd-wd,wd-10,wd-10);
     }
 }
 
