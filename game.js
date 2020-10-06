@@ -57,9 +57,9 @@ uniqueobjects = [
     ['Street Sign',34,13,false,['A plate of metal painted with words. The letters are faded, but still readable: “TOTALLY NOT SUSPICIOUS MILITARY TOWER IN 10 BLOCKS. GO NORTH.”'],'sign.png'],
     ['Street Sign',37,17,false,['A green street sign lies half-buried in the ground. Its faded lettering reads: HALF-FOODS GROCERY STORE in 10 BLOCKS SOUTH.'],'sign.png'],
     ['Road Sign',19,12,false,['Ye Olde Military Base 10 Blocks East'],'sign.png'],
-    ['Army Recruitment Poster',16,16,false,['Uncle Same wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).'],'billboard.png'],
-    ['Army Recruitment Poster',26,4,false,['Uncle Same wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).'],'billboard.png'],
-    ['Army Recruitment Poster',21,6,false,['Uncle Same wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).'],'billboard.png'],
+    ['Army Recruitment Poster',16,16,false,['Uncle Sam wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).'],'billboard.png'],
+    ['Army Recruitment Poster',26,4,false,['Uncle Sam wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).'],'billboard.png'],
+    ['Army Recruitment Poster',21,6,false,['Uncle Sam wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).'],'billboard.png'],
 ]
 
 
