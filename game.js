@@ -25,7 +25,7 @@ ghouls = [];
 
 //special objects array
 
-//[NAME,X,Y,READ,MESSAGE]
+//[NAME,X,Y,READ,MESSAGE,IMAGE]
 
 /*uniqueobjects = [
     ['Nuclear Killswitch',Math.round(gw/2)-3,Math.round(gh/2),false,'A green street sign lies half-buried in the ground. Its faded lettering reads: HALF-FOODS GROCERY STORE in 300 METERS. Turn RIGHT at the intersection.'],
@@ -38,8 +38,8 @@ ghouls = [];
 
 uniqueobjects = [
     //['Nuclear Killswitch',34,15,false,''],
-    ['Nuclear Killswitch',67,6,false,''],
-    ['Grocery Store',37,27,false,['[GROCERY STORE]\nWhile the majority of the green lettering on the ancient sign had crumbled, you can still make out the words ‘Half Foods Grocers: food for twice the price”. After busting through the window, your crew explores the rest of the store, staying away from the gaping hole in the ceiling from which small metal fragments periodically tumble.','In one of the few cash registers that avoided rust brought on by the torrential rain, you find a small cloth-bound notebook. The majority of the pages have been hastily torn out or faded by the elements- but you manage to make out some sparse lettering: They’ve finally done it. Those little ***** have dropped them on us. The radio says eighty minutes until all heck breaks loose. I’m going to go find Dan and see if he knows anything else. After that, the ink veers off the page. You shut the book and hide it away, but it remains open in your mind for hours. Who was this person?']],
+    ['Nuclear Killswitch',67,6,false,'','killswitch.png'],
+    ['Grocery Store',37,27,false,['[GROCERY STORE]\nWhile the majority of the green lettering on the ancient sign had crumbled, you can still make out the words ‘Half Foods Grocers: food for twice the price”. After busting through the window, your crew explores the rest of the store, staying away from the gaping hole in the ceiling from which small metal fragments periodically tumble.','In one of the few cash registers that avoided rust brought on by the torrential rain, you find a small cloth-bound notebook. The majority of the pages have been hastily torn out or faded by the elements- but you manage to make out some sparse lettering: They’ve finally done it. Those little ***** have dropped them on us. The radio says eighty minutes until all heck breaks loose. I’m going to go find Dan and see if he knows anything else. After that, the ink veers off the page. You shut the book and hide it away, but it remains open in your mind for hours. Who was this person?'],'grocery.png'],
     ['Ballistic Early Warning System Tower',34,3,false,["[BALLISTIC EARLY WARNING SYSTEM TOWER]\nIn spite of the darkness of night, it's the tallest thing you’ve ever seen - one of your group claims that as a child he lived in the ruins of massive stone giants miles taller than this one, but he’s well known for his ridiculous tales. The concrete tower juts out of the ground at an angle, and ivy snakes up its walls. Despite its formidable appearance, it is easily entered through one of the many gaping holes in its side.","After ascending the winding spiral staircase for what seems like forever, you and your team of reckless villagers see a source of light emanating from a small room marked ‘WC’. Inside, near the porcelain remains of a sink, lies a small monitor - its screen fractured down the middle yet nevertheless giving out the distinct blue glow that the people of the past seemed to obsess over. You lean down, the only one in the group brave enough to attempt interaction with it - and press one of the many buttons that seem to have been embedded in a square below it. Suddenly, it lights up, claiming in the same writing of the journal claiming the presence of a ‘thermonuclear’ threat in the region. Shocked, you and your team look around the room - but it appears to have deceived you. Minutes pass, and all of your team members look as bored yet intact as usual.","Weary of further lies, you probe the monitor slowly- at first stirring up unhappy SYNTAX ERRORs but eventually managing to open a small journal- timestamped the day of the tragedy. You begin to read.",`03/05:
     Sarah’s been a little under the weather recently, so I took a day off to make her some of my ‘world famous’ chili. BIG MISTAKE. As soon as I got back in, I had to deal with a screaming colonel. The nation alert level has risen to DEFCON-2 over the day off.
     03/06:
@@ -50,16 +50,16 @@ uniqueobjects = [
     I… I don’t even know what to think. The entire country has been moved to DEFCON-1. It’s only a matter of time, now. Sarah’s not picking up her phone. In the case of an emergency, we've agreed to meet at the military base that's east of here...
     03/12: 
     It’s happened. I'm going.
-    `]],
-    ['Ye Olde Military Base',9,12,false,['[YE OLDE MILITARY BASE]\nThe place itself appears in distress. Many of the doors have been bust open, and papers are scattered haphazardly all over the floor. You pick up one of them.','It reads, “This is Dan. The bombs have hit. If anyone’s left after this tragedy, go to my laboratory at (66,6). I’ve been working on some things there…” At this point, the writing turns to an illegible, frantic scrawl.']],
-    ['Laboratory',66,6,false,['[THE LABORATORY]\nSomething tells you that you are nearly there - perhaps it is just a block away.']],
-    ['Ancient Advertisement',37,23,false,['“Come buy your FRESH ORGANIC FRUITS at HALF-FOODS GROCERY STORE before disaster strikes! Take Route I-1101 four blocks south.”']],
-    ['Street Sign',34,13,false,['A plate of metal painted with words. The letters are faded, but still readable: “TOTALLY NOT SUSPICIOUS MILITARY TOWER IN 10 BLOCKS. GO NORTH.”']],
-    ['Street Sign',37,17,false,['A green street sign lies half-buried in the ground. Its faded lettering reads: HALF-FOODS GROCERY STORE in 10 BLOCKS SOUTH.']],
-    ['Road Sign',19,12,false,['Ye Olde Military Base 10 Blocks East']],
-    ['Army Recruitment Poster',16,16,false,['Uncle Same wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).']],
-    ['Army Recruitment Poster',26,4,false,['Uncle Same wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).']],
-    ['Army Recruitment Poster',21,6,false,['Uncle Same wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).']],
+    `],'tower.png'],
+    ['Ye Olde Military Base',9,12,false,['[YE OLDE MILITARY BASE]\nThe place itself appears in distress. Many of the doors have been bust open, and papers are scattered haphazardly all over the floor. You pick up one of them.','It reads, “This is Dan. The bombs have hit. If anyone’s left after this tragedy, go to my laboratory at (66,6). I’ve been working on some things there…” At this point, the writing turns to an illegible, frantic scrawl.'],'militarybase.png'],
+    ['Laboratory',66,6,false,['[THE LABORATORY]\nSomething tells you that you are nearly there - perhaps it is just a block away.'],'lab.png'],
+    ['Ancient Advertisement',37,23,false,['“Come buy your FRESH ORGANIC FRUITS at HALF-FOODS GROCERY STORE before disaster strikes! Take Route I-1101 four blocks south.”'],'sign.png'],
+    ['Street Sign',34,13,false,['A plate of metal painted with words. The letters are faded, but still readable: “TOTALLY NOT SUSPICIOUS MILITARY TOWER IN 10 BLOCKS. GO NORTH.”'],'sign.png'],
+    ['Street Sign',37,17,false,['A green street sign lies half-buried in the ground. Its faded lettering reads: HALF-FOODS GROCERY STORE in 10 BLOCKS SOUTH.'],'sign.png'],
+    ['Road Sign',19,12,false,['Ye Olde Military Base 10 Blocks East'],'sign.png'],
+    ['Army Recruitment Poster',16,16,false,['Uncle Same wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).'],'billboard.png'],
+    ['Army Recruitment Poster',26,4,false,['Uncle Same wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).'],'billboard.png'],
+    ['Army Recruitment Poster',21,6,false,['Uncle Same wants YOU for the US Army! Sign up at Ye Olde Military Base at (9,12).'],'billboard.png'],
 ]
 
 
@@ -268,6 +268,10 @@ function setup(){
     scatterghouls();
     textFont('Tahoma');
     noSmooth();
+    
+    for (let obj of uniqueobjects){
+        obj[5] = loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/uniques/'+obj[5]);
+    }
 }
 
 let currentStructure = 0;
@@ -679,7 +683,8 @@ function drawUniques(){
     for(let i=0;i<uniqueobjects.length;i++){
         fill(255,255,100);
         //rect(objects[i]['x']*wd+5+offsetX,objects[i]['y']*hd+5+offsetY,wd-10,hd-10);
-        rect(uniqueobjects[i][1]*wd+5+offsetX,uniqueobjects[i][2]*hd+5+offsetY+hd-wd,wd-10,wd-10);
+        //rect(uniqueobjects[i][1]*wd+5+offsetX,uniqueobjects[i][2]*hd+5+offsetY+hd-wd,wd-10,wd-10);
+        image(uniqueobjects[i][5],uniqueobjects[i][1]*wd+5+offsetX,uniqueobjects[i][2]*hd+5+offsetY+hd-wd,wd-10,wd-10);
     }
 }
 
