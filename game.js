@@ -1,4 +1,4 @@
-//0.6.6: Complete Functionality
+//0.7.1: Complete Functionality
 
 //canvas dimensions
 let w = window.innerWidth/2;
@@ -260,7 +260,7 @@ function setup(){
     fogImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/fog.png');
     ghoulImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/ghoul.png');
     startImg=loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/start-img.png');
-    console.log('Clearing the Skies - version 0.6.2');
+    console.log('Clearing the Skies - version 0.7.1');
     createCanvas(w,h);
     noStroke();
     //makegrid();
@@ -270,7 +270,7 @@ function setup(){
     noSmooth();
     
     for (let obj of uniqueobjects){
-        obj[4] = loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/uniques/'+obj[4]);
+        obj[5] = loadImage('https://raw.githubusercontent.com/locus-lab/insertnamehere/master/images/uniques/'+obj[5]);
     }
 }
 
@@ -362,7 +362,7 @@ function drawStart(){
     text('Clearing the Skies',70,h/2-90/2);
     
     textSize(10);
-    text('v.0.6.0',70,h/2-90/2+30);
+    text('v.0.7.1',70,h/2-90/2+30);
     
     textSize(20);
     if(buttonHovered(70,h/2-90/2+60,w-140,50)){
